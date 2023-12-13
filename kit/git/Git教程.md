@@ -16,7 +16,9 @@ Git是目前世界上最好的分布式版本控制系统.
 1. git add: 就是把文件添加进去, 实际上就是把文件添加到暂存区
 2. git commit: 实际上就是把暂存区所有的变更提交到当前分支上
 
-#### 2: Git常用操作
+
+
+#### 2: 常用命令操作
 
 ##### 2.1 创建版本库及常用提交命令
 
@@ -56,7 +58,7 @@ Git是目前世界上最好的分布式版本控制系统.
 
 
 
-#### 3: Git远程仓库
+#### 3: 远程仓库
 
 ##### 3.1 设置公钥和私钥
 
@@ -65,6 +67,28 @@ Git是目前世界上最好的分布式版本控制系统.
 id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人
 
 设置: 登录github,打开” settings”中的SSH Keys页面，然后点击“Add SSH Key”,填上任意title，在Key文本框里黏贴id_rsa.pub文件的内容
+
+##### 3.2 如何添加远程仓库
+
+先有本地仓库, 后有远程仓库,  远程仓库和本地仓库关联
+
+```git
+echo "# gittest" >> README.md
+  git init
+  git add README.md
+  git commit -m "first commit"
+  git branch -M main
+  git remote add origin git@github.com:ElliotTung1992/gittest.git
+  git push -u origin main
+```
+
+只有远程仓库，可容远程仓库
+
+```
+git clone git@github.com:ElliotTung1992/gittest.git
+```
+
+
 
 
 
