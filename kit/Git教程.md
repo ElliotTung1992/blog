@@ -94,19 +94,25 @@ git clone git@github.com:ElliotTung1992/gittest.git
 
 ##### 4.1 创建和合并分支
 
-创建并切换到dev分支: git checkout -b dev;
+创建并切换到dev分支: git checkout -b branch_name;
 
-创建分支: git branch dev;
+创建分支: git branch branch_name;
 
-切换分支: git checkout dev;
+切换分支: git checkout branch_name;
 
 查看分支: git branch;
 
-推送分支到远程仓库: git push --set-upstream origin dev
+推送分支到远程仓库: git push --set-upstream origin branch_name
 
-合并某分支到当前分支:git merge '分支名'
+合并某分支到当前分支: git merge branch_name
 
- 
+删除分支: git branch -d branch_name
+
+删除远程分支: git push origin --delete branch_name
+
+##### 4.2 分支策略管理
+
+
 
 
 
