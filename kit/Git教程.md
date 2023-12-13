@@ -104,7 +104,9 @@ git clone git@github.com:ElliotTung1992/gittest.git
 
 推送分支到远程仓库: git push --set-upstream origin dev
 
+合并某分支到当前分支:git merge '分支名'
 
+ 
 
 
 
