@@ -102,7 +102,9 @@ git clone git@github.com:ElliotTung1992/gittest.git
 
 查看分支: git branch;
 
- 
+推送分支到远程仓库: git push --set-upstream origin dev
+
+
 
 
 
