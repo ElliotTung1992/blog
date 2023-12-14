@@ -141,7 +141,13 @@ Fast Forward模式: 删除分支后会丢失分支信息
 
 
 
+#### 5: 全局配置
 
+##### 5.1 配置电子邮箱地址和用户名称
+
+配置电子邮箱地址: git config --global user.email "your_email@example.com"
+
+配置用户名称: git config --global user.name "Your Name"
 
 
 
