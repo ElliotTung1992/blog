@@ -15,6 +15,11 @@ Git是目前世界上最好的分布式版本控制系统.
 
 1. git add: 就是把文件添加进去, 实际上就是把文件添加到暂存区
 2. git commit: 实际上就是把暂存区所有的变更提交到当前分支上
+3. git push: 将变更提交至远程仓库
+4. git fetch: 拉取远程仓库所有变更
+5. git clone: 克隆远程仓库至本地仓库
+6. git pull: 拉取远程仓库的最新变更, 并与本地分支合并
+7. git checkout branch_name: 切换分支 
 
 
 
@@ -55,6 +60,24 @@ Git是目前世界上最好的分布式版本控制系统.
 丢弃工作区的修改: git checkout -- file文件名
 
 删除文件: 删除文件;git add '删除的文件'; git commit
+
+##### 2.4 stash隐藏本地变更
+
+前工作现场 ”隐藏起来”: git stash
+
+查看隐藏内容: git stash list
+
+恢复隐藏内容, 并手动删除: git stash apply, git stash drop.
+
+恢复并删除隐藏内容: git stash pop.
+
+##### 2.5 推送变更至远程服务
+
+git push origin branch_name
+
+##### 2.6 拉取远程服务最新变更至工作区
+
+git pull
 
 
 
@@ -114,9 +137,7 @@ git clone git@github.com:ElliotTung1992/gittest.git
 
 Fast Forward模式: 删除分支后会丢失分支信息
 
-关闭Fast Forward模式: -no-ff禁用Fast Forward模式
-
-
+关闭Fast Forward模式: --no-ff禁用Fast Forward模式: git merge --no-ff branch_name
 
 
 
