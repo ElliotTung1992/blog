@@ -151,6 +151,23 @@ Fast Forward模式: 删除分支后会丢失分支信息
 
 
 
+#### 6: 问题解决
+
+##### 6.1 error: failed to push some refs to 'github.com:ElliotTung1992/blog.git'
+
+现象: 在远程仓库新加README.md文件, 在本地工作区新增修改git push报错
+
+原因: 本地仓库与远程仓库都有变更内容, 但是两份内容没有联系
+
+解决: 先已远程仓库为基准pull, 再push
+
+```
+错误信息提示: hint: 'git pull ...') before pushing again.
+git pull --rebase origin main
+```
+
+
+
 
 
 
