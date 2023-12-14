@@ -112,6 +112,10 @@ git clone git@github.com:ElliotTung1992/gittest.git
 
 ##### 4.2 分支策略管理
 
+Fast Forward模式: 删除分支后会丢失分支信息
+
+关闭Fast Forward模式: -no-ff禁用Fast Forward模式
+
 
 
 
