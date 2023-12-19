@@ -5,7 +5,7 @@
 | Quartz          |      |
 | ElasticJob      |      |
 | XXL-JOB         |      |
-| Spring-schedule |      |
+| Spring-Schedule |      |
 
 
 
@@ -73,6 +73,10 @@ public TaskScheduler taskScheduler(){
 1. 假设现在线程池的大小增大到了5个, 如果有一个调度阻塞了，5个周期之后是不是所有的调度又被阻塞了
 
 ##### 2.3 源码解析
+
+1. 利用Spring的BeanPostProcessor后置处理器, 扫描@Scheduled注解的方法, 然后交给调度器处理.
+
+2. 利用Spring的ApplicationListener在项目启动完成后, 扫描所有的SchedulingConfigurer.class实现类, 然后交给调度器处理.
 
 
 
