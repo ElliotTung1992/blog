@@ -31,7 +31,11 @@ Git是目前世界上最好的分布式版本控制系统.
 
 把需要提交的文件添加到暂存区里: git add 文件名
 
+把文件从暂存区撤销, 回到未被追逐的状态: git restore --staged filename
+
 把暂存区的文件提交到本地仓库: git commit -m '提交信息'
+
+撤销之前的commit: git reset --soft HEAD^.
 
 查看是否有未提交的修改: git status.
 
@@ -148,6 +152,10 @@ Fast Forward模式: 删除分支后会丢失分支信息
 配置电子邮箱地址: git config --global user.email "your_email@example.com"
 
 配置用户名称: git config --global user.name "Your Name"
+
+查看git配置的用户名: git config user.name
+
+查看git配置的邮箱: git config user.email
 
 
 
