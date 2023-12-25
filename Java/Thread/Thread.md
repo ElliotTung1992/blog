@@ -1,6 +1,14 @@
 #### 1. 线程
 
-##### 1.1 线程状态
+##### 1.1 线程状态流转图
+
+![ThreadLifeCycle](/Users/ganendong/Documents/design/export/ThreadLifeCycle.png)
+
+
+
+#### 2. 详情
+
+##### 2.1 线程状态
 
 ```
 public enum State {
@@ -72,3 +80,5 @@ public enum State {
     TERMINATED;
 }
 ```
+
+##### 2.2 线程方法
