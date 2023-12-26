@@ -35,6 +35,9 @@ public enum State {
      * to enter a synchronized block/method or
      * reenter a synchronized block/method after calling
      * {@link Object#wait() Object.wait}.
+     * 等待监视器锁定的线程被阻塞的线程状态.
+     * 处于阻塞状态的线程等待监视器锁定.
+     * 线程进入同步代码块/方法或调用后重新进入同步代码块/方法.
      */
     BLOCKED,
 
@@ -56,6 +59,13 @@ public enum State {
      * {@code Object.notify()} or {@code Object.notifyAll()} on
      * that object. A thread that has called {@code Thread.join()}
      * is waiting for a specified thread to terminate.
+     * 等待线程的线程状态
+     * 线程由于调用以下方法之一而处于等待状态:
+     * Object.wait/Thread.join/LockSupport.park
+     * 处于等待的线程正在等待另一个线程执行特定的操作
+     * 例如: 举例一个已经调用Object.wait()的线程正在等待另一个线程用这个对象调用Object.notify()
+     * 或Object.notifyAll()
+     * 一个已经调用过Thread.join()的线程等待特定的线程结束.
      */
     WAITING,
 
@@ -70,15 +80,58 @@ public enum State {
      *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
      *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
      * </ul>
+     * 处于等待特定时间的线程的线程状态.
+     * 线程处于计时等待状态由于调用了以下某个方法并使用了特定的正等待时间
+     * Thread.sleep/Object.wait/Thread.join/LockSupport.parkNanos/LockSupport.parkUntil
      */
     TIMED_WAITING,
 
     /**
      * Thread state for a terminated thread.
      * The thread has completed execution.
+     * 终止线程的线程状态. 线程已经完成执行.
      */
     TERMINATED;
 }
 ```
 
 ##### 2.2 线程方法
+
+java.lang.Object#wait(long, int): 会使线程进入等待状态并释放该对象锁.
+
+java.lang.Object#notify
+
+java.lang.Object#notifyAll
+
+
+
+java.util.concurrent.locks.LockSupport#park(java.lang.Object)
+
+java.util.concurrent.locks.LockSupport#parkNanos(java.lang.Object, long)
+
+java.util.concurrent.locks.LockSupport#parkUntil(java.lang.Object, long)
+
+java.util.concurrent.locks.LockSupport#unpark
+
+
+
+java.lang.Thread#join(long)
+
+java.lang.Thread#sleep(long)
+
+##### 2.3 线程局部变量
+
+```
+ThreadLocal.ThreadLocalMap threadLocals
+```
+
+
+
+#### 常见异常
+
+```
+java.lang.IllegalMonitorStateException: current thread is not owner
+当前线程不是锁的拥有者
+
+```
+
