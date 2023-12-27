@@ -17,3 +17,5 @@ CAS 操作包含三个操作数 —— 内存位置（V）、预期原值（A）
 2.1.1 JUC下的atomic包下的类
 
 AtomicInteger的使用: 线程池状态的控制
+
+##### 2.2 synchronized关键字

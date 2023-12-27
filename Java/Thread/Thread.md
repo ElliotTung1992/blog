@@ -97,27 +97,47 @@ public enum State {
 
 ##### 2.2 线程方法
 
-java.lang.Object#wait(long, int): 会使线程进入等待状态并释放该对象锁.
+java.lang.Object#wait(long, int): Causes the current thread to wait until it is awakened. Typically by being notified or interrupted.
 
-java.lang.Object#notify
+会使线程进入等待状态并释放该对象锁.
 
-java.lang.Object#notifyAll
+java.lang.Object#notify: Wakes up a single thread that is waiting on this object's monitor.
 
+唤醒正在等待这个对象锁的单个线程.
 
+java.lang.Object#notifyAll: Wakes up all threads that are waiting on this object's monitor.
 
-java.util.concurrent.locks.LockSupport#park(java.lang.Object)
-
-java.util.concurrent.locks.LockSupport#parkNanos(java.lang.Object, long)
-
-java.util.concurrent.locks.LockSupport#parkUntil(java.lang.Object, long)
-
-java.util.concurrent.locks.LockSupport#unpark
+ 唤醒那些正在等待这个对象锁的所有线程.
 
 
 
-java.lang.Thread#join(long)
+java.util.concurrent.locks.LockSupport#park(java.lang.Object): Disables the current thrad for thread scheduling purposes unless the permit is available.
 
-java.lang.Thread#sleep(long)
+锁当前线程除非允许操作.
+
+java.util.concurrent.locks.LockSupport#parkNanos(java.lang.Object, long): Disable the current thread for thread scheduling purposes. for up to the specified waiting time, unless the permit is available.
+
+锁定当前线程一段时间除非允许操作.
+
+java.util.concurrent.locks.LockSupport#parkUntil(java.lang.Object, long): Disables the current thread for thread scheduling purpose, until the specified deadline, unless the permit is available.
+
+锁定当前线程直到制定的截止时间除非允许操作.
+
+java.util.concurrent.locks.LockSupport#unpark: Makes available the permit for the given thread.
+
+使指定线程允许操作.
+
+
+
+java.lang.Thread#join(long): Waits at most xxx milliseconds for this thread to die.
+
+当前线程最多等待目标线程一段时间或执行完成操作(线程死亡).
+
+java.lang.Thread#sleep(long): Causes the currently executing thread to sleep.
+
+使当前正在执行的线程进入睡眠状态.
+
+
 
 ##### 2.3 线程局部变量
 
