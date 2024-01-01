@@ -37,3 +37,9 @@ RocketMq
 ##### 3.1 线上监控诊断工具
 
 Arthas
+
+
+
+#### 架构方案
+
+##### 单点登录(Single Sign On)
