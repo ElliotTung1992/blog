@@ -104,5 +104,166 @@ Maven有以下三个标准的生命周期:
 
 
 
+在一个生命周期中, 运行某个阶段的时候, 它之前所有阶段都会被运行.
+
+如执行mvn clean将运行以下两个生命周期阶段: pre-clean, clean
+
+如执行mvn post-clean将运行以下三个生命周期阶段: pre-clean, clean, post-clean
+
+##### Clean生命周期
+
+1. pre-clean: 执行一些需要在clean之前完成的工作
+2. clean: 移除所有上一次构建生成的文件
+3. post-clean: 执行一些需要在clean之后立刻完成的工作 
+
+##### Default(Build)生命周期
+
+##### Site生命周期
+
+Maven Site插件一般用来创建新的报告文档, 部署站点等.
+
+1. pre-site: 执行一些需要在生成站点文档之前完成的工作
+2. site: 生成项目的站点文档
+3. post-site: 执行一些需要在站点文档之后完成的工作, 并且为部署做准备
+4. Site-deploy: 将生成的站点文档部署到特定的服务器上
+
+
+
+#### 4. Maven仓库
+
+Maven仓库有三种类型:
+
+1. 本地(Local)
+2. 中央(Central)
+3. 远程(Remote)
+
+##### 本地仓库
+
+运行Maven的时候, Maven所需要的任何构建都是直接从本地仓库获取.
+
+如果本地仓库没有, 它会首先尝试从远程仓库下载构建至本地仓库, 然后再使用本地仓库的构建.
+
+在setting.xml文件配置本地仓库标签
+
+<localRepository>/path/to/local/repo</localRepository>
+
+运行Maven命令, Maven将下载构建到指定的目录下.
+
+##### 中央仓库
+
+Maven中央仓库是由Maven社区提供的仓库, 其中包含了大量常用的库.
+
+1. 这个仓库由Maven社区管理
+
+2. 不需要配置
+
+3. 需要通过网络才能访问
+
+##### 远程仓库
+
+如果Maven在中央仓库也找不到的依赖, 它会通知构建过程并输出错误信息到控制台.
+
+##### Maven搜索依赖顺序
+
+当我们执行Maven构建命令时, Maven开始按照以下顺序查找依赖的库:
+
+步骤1: 在本地仓库中搜索, 如果找不到, 执行步骤2.
+
+步骤2: 在中央仓库搜索, 如果找不到, 并且由一个或多个远程仓库已经设置, 则执行步骤4, 如果找到了则下载到本地仓库中以备将来使用.
+
+步骤3: 如果远程仓库没有被设置, Maven将简单的停滞并抛出错误.
+
+步骤4: 在一个或多个远程仓库中搜索依赖文件, 如果找到则下载到本地仓库以备将来引用, 否则Maven将停止处理并抛出错误.
+
+##### Maven设置阿里云镜像
+
+Maven仓库默认在海外, 国内使用很慢, 更换为阿里云的仓库
+
+```
+<mirrors>
+	<mirror>
+		<id>mirror</id>
+		<mirrorOf>!rdc-releases,!rdc-snapshots</mirrorOf>
+		<name>mirror</name>
+		<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+	</mirror>
+<mirrors>
+```
+
+使用其它代理服务器
+
+```
+<repository>
+  <id>spring</id>
+  <url>https://maven.aliyun.com/repository/spring</url>
+  <releases>
+    <enabled>true</enabled>
+  </releases>
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository>
+```
+
+
+
+#### Maven插件
+
+Maven有以下三个标准的生命周期:
+
+1. Clean: 项目清理的处理
+2. default(或build): 项目部署的处理
+3. Site: 项目站点文档创建的处理
+
+每个生命周期都包含着一系列的阶段(phase).这些phase就相当于maven提供的统一的接口, 然后这些phase的实现由Maven插件来实现.
+
+比如我输入命令: mvn clean; clean对应的就是Clean生命周期的clean阶段, 但是clean的具体操作是由maven-clean-plugin来实现的.
+
+所以说Maven生命周期的每一个阶段的具体实现都是由Maven插件实现的.
+
+Maven插件通常被用来:
+
+1. 创建jar文件
+2. 创建war文件
+3. 编译代码文件
+4. 代码单元测试
+5. 创建工程文档
+6. 创建工程报告
+
+插件通常提供了一个目标的集合, 并且可以使用下面的语法执行:
+
+```
+mvn [plugin-name]:[goal-name]
+```
+
+例如: 一个Java工程可以使用maven-compiler-plugin的compile-goal编译, 使用以下命令:
+
+```
+mvn compiler:compile
+```
+
+##### 插件类型
+
+| 类型              | 描述                                           |
+| ----------------- | ---------------------------------------------- |
+| Build plugins     | 在构建时执行, 并在pom.xml的元素中配置.         |
+| Reporting plugins | 在网站生成过程中执行, 并在pom.xml的元素中配置. |
+
+常用的插件:
+
+Clean: 构建之后清理目标文件, 删除目标目录.
+
+Compiler: 编译java源文件.
+
+Surefile: 运行Junit单元测试, 创建测试报告.
+
+Jar: 从当前工程中构建JAR文件.
+
+War: 从当前文件中构建WAR文件.
+
+Javadoc: 为工程生成Javadoc.
+
+antrun: 从构建过程的任意一个阶段中运行一个ant任务的集合.
+
 
 
