@@ -267,3 +267,126 @@ antrun: 从构建过程的任意一个阶段中运行一个ant任务的集合.
 
 
 
+#### Maven构建Java项目
+
+Maven使用原型archetype插件创建项目. 要构建一个简单的java项目, 我们将使用maven-archetype-quickstart插件.
+
+命令格式如下:
+
+```
+mvn archetype:generate "-DgroupId=com.companyname.bank" "-DartifactId=consumerBanking" "-DarchetypeArtifactId=maven-archetype-quickstart" "-DinteractiveMode=false"
+```
+
+参数说明:
+
+1. **-DgroupId**: 组织名，公司网址的反写 
+2. **-DartifactId**: 项目名
+3. **-DarchetypeArtifactId**: 指定 ArchetypeId，maven-archetype-quickstart，创建一个简单的 Java 应用
+4. **-DinteractiveMode**: 是否使用交互模式
+
+
+
+##### 引入外部依赖
+
+pom.xml的dependencies 列表列出了我们的项目需要构建的所有外部依赖项
+
+```
+<dependencies>
+    <!-- 在这里添加你的依赖 -->
+    <dependency>
+        <groupId>ldapjdk</groupId>  <!-- 库名称，也可以自定义 -->
+        <artifactId>ldapjdk</artifactId>    <!--库名称，也可以自定义-->
+        <version>1.0</version> <!--版本号-->
+        <scope>system</scope> <!--作用域-->
+        <systemPath>${basedir}\src\lib\ldapjdk.jar</systemPath> <!--项目根目录下的lib文件夹下-->
+    </dependency> 
+</dependencies>
+```
+
+scope的分类:
+
+1. compile: 默认值;他表示该依赖需要参与当前项目的编译, 还有后续的测试, 运行周期也参与其中. 打包的时候需要包含进去
+2. test: 当前依赖仅仅参与测试相关的工作, 包括测试代码的编译和执行, 不会被打包.例如: Junit.
+3. runtime: 当前依赖无需参与项目的编译, 不过后期的测试和运行周期需要其参与.例如: JDBC驱动
+4. provided: 打包的时候不需要考虑该依赖, 别的工程会提供. 相当于打包的时候做了exclude操作
+5. system: 从参与角度来说, 和provide相同. 不过被依赖项不会从maven仓库下载, 而是从本地文件系统获取, 需要添加systemPath的属性来定义路径
+
+
+
+##### Maven项目文档
+
+修改pom.xml文件, 添加以下配置
+
+```
+	<build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+```
+
+然后执行: mvn site
+
+
+
+##### Maven快照(Snapshot)
+
+**什么是快照?**
+
+快照是一种特殊的版本, 指定了某个当前的开发进度的副本。不同于常规的版本, Maven每次构建都会在远程仓库中检查最新的快照.
+
+**快照和版本比较:**
+
+对于版本, 如果maven以前下载过指定的版本文件, Maven将不会再从仓库下载可用的版本文件, 如需更新代码, 需要升级版本.
+
+快照: 每次构建项目都会自动获取最新的快照.
+
+
+
+#### Maven异常
+
+问题1:Java 17 和 maven-archetype-quickstart 出现错误：不再支持源选项 5
+
+```
+[ERROR] Source option 5 is no longer supported. Use 7 or later.
+[ERROR] Target option 5 is no longer supported. Use 7 or later.
+```
+
+原因:
+
+出现此问题的原因是 maven 插件 （maven-compiler-plugin：3.1） 将参数传递给 JDK 17 java 编译器。`-source 1.5 -target 1.5`
+
+解决方案:
+
+```
+maven-compiler-plugin 将传递诸如（或一些更大的数字）之类的选项，以便 JDK 17 可以生成针对 JDK 17 编译器支持的 JDK 版本的代码。pom.xml-source 1.8 -target 1.8
+
+<properties>
+     <maven.compiler.source>1.8</maven.compiler.source>
+     <maven.compiler.target>1.8</maven.compiler.target>
+</properties>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
