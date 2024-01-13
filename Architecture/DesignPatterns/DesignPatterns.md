@@ -8,6 +8,7 @@
 4. 工厂模式
 5. 代理模式
 6. 门面模式/外观模式
+7. MVC模式
 
 
 
@@ -17,7 +18,9 @@
 
 ![FacadePattern](https://raw.githubusercontent.com/LittleElliotTung1992/pic_bed/main/root/FacadePattern.png)
 
+应用场景:
 
+1. Java日志门面
 
 
 
