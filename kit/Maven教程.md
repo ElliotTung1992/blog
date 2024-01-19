@@ -127,6 +127,32 @@ Maven Site插件一般用来创建新的报告文档, 部署站点等.
 3. post-site: 执行一些需要在站点文档之后完成的工作, 并且为部署做准备
 4. Site-deploy: 将生成的站点文档部署到特定的服务器上
 
+##### Maven部署跳过Test阶段
+
+1. 命令行方式跳过测试阶段
+
+```
+mvn package -DskipTests// 会跳过单元测试, 但是会继续编译
+mvn package -Dmaven.test.skip=true //不但会跳过单元测试, 也会跳过测试代码的编译 
+```
+
+2. Pom.xml中配置跳过测试
+
+```
+<build>
+    <plugins>
+        <!-- maven 打包时跳过测试 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
 
 
 #### 4. Maven仓库
@@ -311,6 +337,10 @@ scope的分类:
 4. provided: 打包的时候不需要考虑该依赖, 别的工程会提供. 相当于打包的时候做了exclude操作
 5. system: 从参与角度来说, 和provide相同. 不过被依赖项不会从maven仓库下载, 而是从本地文件系统获取, 需要添加systemPath的属性来定义路径
 
+scope的使用场景:
+
+公共核心模块的部分依赖的scope可以设置为provided, 由引用此依赖的具体服务提供具体的依赖
+
 
 
 ##### Maven项目文档
@@ -352,6 +382,13 @@ scope的分类:
 
 快照: 每次构建项目都会自动获取最新的快照.
 
+##### Maven多模块管理
+
+模块拆分策略：
+
+1. 按职责划分(domain/controller/service/dao/...)
+2. 按功能划分(order/pay/common/product/...)
+
 
 
 #### Maven异常
@@ -377,10 +414,6 @@ maven-compiler-plugin 将传递诸如（或一些更大的数字）之类的选�
      <maven.compiler.target>1.8</maven.compiler.target>
 </properties>
 ```
-
-
-
-
 
 
 
