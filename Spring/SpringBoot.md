@@ -17,3 +17,64 @@ convention-over-configuration: 约定大于配置
 
 ##### Spring Boot自动配置原理
 
+@SpringBootApplication注解 - 本质是一个组合注解
+
+
+
+@SpringBootApplication注解包含下面三个注解
+
+@SpringBootConfiguration注解 - 其实就是@Configuration, 标注当前类为配置类
+
+@EnableAutoConfiguration注解 - 开启自动配置
+
+@ComponentScan注解 - 扫描包
+
+
+
+@EnableAutoConfiguration注解包含下面两个注解
+
+@AutoConfigurationPackage注解 - 就是将主配置类所在的包下面所有的组件都扫描注册到Spring容器中
+
+@AutoConfigurationImportSelector注解
+
+
+
+##### Spring Boot常用的Conditional注解
+
+在加载自动配置类的时候, Spring Boot并不是将spring.factories的配置全部加载进来, 而是通过Conditional等注解的判断进行动态加载
+
+@Conditional是Spring的底层注解, 意思就是根据不同的条件进行判断, 如果满足指定的条件, 那么对应的配置才会生效.
+
+常用的Conditional注解
+
+1. @ConditionalOnClass: classpath存在该类时生效
+2. @ConditionalOnMissingClass: classpath不存在该类时生效
+3. @ConditionalOnBean: 容器中存在该类型的Bean时生效
+4. @ConditionalOnMissingBean: 容器中不存在该类型的Bean时生效
+5. @ConditionalOnSingleCandidate: 容器中该类型的bean只有一个或@Primary的只有一个时生效
+6. @ConditionalOnExpression: SpEL表达式为true时
+7. @ConditionalOnProperty: 参数设置或者值一致时生效
+8. @ConditionalOnResource: 指定的文件存在时生效
+9. @ConditionalOnJndi: 指定的JNDI存在时生效
+10. @ConditionalOnJava: 指定Java版本存在时生效
+11. @ConditionalOnWebApplication: Web应用环境下生效
+12. @ConditionalOnNotWebApplication: 非Web应用环境下起效
+
+##### Spring Boot相关的异常
+
+错误信息: JSR-330 javax.inject.Inject
+
+错误原因: 断点位置不合理
+
+
+
+
+
+
+
+
+
+
+
+
+
