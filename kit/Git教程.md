@@ -174,6 +174,17 @@ Fast Forward模式: 删除分支后会丢失分支信息
 git pull --rebase origin main
 ```
 
+##### 6.2 Failed to connect to 127.0.0.1 port: 7890
+
+查看是否使用代理: git config --global -l
+
+取消代理: 
+
+```
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
 
 
 
