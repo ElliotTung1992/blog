@@ -11,3 +11,10 @@
 
 1. SpringCloud Zuul
 2. Gateway
+
+
+
+##### 需要关注的问题
+
+1. 分布式ID
+2. 分布式锁

@@ -389,7 +389,9 @@ scope的使用场景:
 1. 按职责划分(domain/controller/service/dao/...)
 2. 按功能划分(order/pay/common/product/...)
 
+##### 依赖冲突
 
+// todo
 
 #### Maven异常
 
