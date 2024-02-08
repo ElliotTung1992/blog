@@ -9,3 +9,11 @@
 **/opt** opt是optional(可选)的缩写, 这是给主机额外安装软件所摆放的目录. 比如你安装一个Oracle数据库就可以放在这个目录下.
 
 **/dev** dev是Device(设备)的缩写, 该目录下存放的是Linux的外部设备, 在Linux中访问设备的方式和访问文件的方式是相同的.
+
+
+
+
+
+
+
+cat /dev/null -> /etc/test.file
