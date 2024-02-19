@@ -67,13 +67,17 @@ Git是目前世界上最好的分布式版本控制系统.
 
 ##### 2.4 stash隐藏本地变更
 
-前工作现场 ”隐藏起来”: git stash
+当前工作现场 ”隐藏起来”: git stash.
 
-查看隐藏内容: git stash list
+当前工作现场 ”隐藏起来”, 并设置注释: git stash save ‘注释’.
 
-恢复隐藏内容, 并手动删除: git stash apply, git stash drop.
+查看隐藏内容: git stash list.
 
-恢复并删除隐藏内容: git stash pop.
+清空隐藏内容: git stash clean.
+
+恢复指定版本的隐藏内容, 并手动删除: git stash apply stash@{$num}, git stash drop stash@{$num}.
+
+恢复并删除最新的隐藏内容: git stash pop.
 
 ##### 2.5 推送变更至远程服务
 
