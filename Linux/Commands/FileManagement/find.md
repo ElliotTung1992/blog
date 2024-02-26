@@ -126,3 +126,12 @@ find / -type f -size 0 -exec ls -l {} \;
 find /path/to/search -name 'pattern' -exec rm {} \;
 ```
 
+查找指定文件的硬链接:
+
+```
+ls -il 查询inode number
+find . -inum (inode number)
+```
+
+
+

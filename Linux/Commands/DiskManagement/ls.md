@@ -16,6 +16,7 @@ Linux ls(英文全拼: list directory contents)命令用于显示指定工作目
 - -A 同 -a ，但不列出 "." (目前目录) 及 ".." (父目录)
 - -F 在列出的文件名称后加一符号；例如可执行档则加 "*", 目录则加 "/"
 - -R 递归显示目录中的所有文件和子目录。
+- **-i**   For each file, print the file's file serial number (inode number). 对于每个文件, 打印文件的文件序列号.
 
 **实例:**
 
@@ -55,6 +56,12 @@ ls [abc]*.txt
 - w 表示写入权限
 - x 表示执行权限
 - \- 表示没有对应权限
+
+展示inode number, 用于查找硬链接
+
+```
+ls -il
+```
 
 
 
