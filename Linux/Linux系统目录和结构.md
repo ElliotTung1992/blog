@@ -16,6 +16,14 @@
 
 **/usr:** usr是unix shared resources(共享资源)的缩写, 这是一个非常重要的目录, 用户的很多应用程序和文件都放在这个目录下, 类似于windows下的program files目录.
 
+**/usr/local:** 本地系统管理员软件安装目录
+
+**/usr/sbin:** 超级用户使用的比较高级的管理程序和系统守护程序
+
+**/usr/bin:**系统用户使用的应用程序
+
+**/usr/src:**内核源代码默认的放置目录
+
 
 
 cat /dev/null -> /etc/test.file
