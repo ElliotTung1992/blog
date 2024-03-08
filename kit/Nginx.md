@@ -46,7 +46,17 @@ nginx -v: 显示Nginx版本
 
 nginx -v: 显示Nginx版本、build信息和配置参数
 
-等等 
+nginx -t: 检查配置是否正确
+
+nginx: 启动nginx
+
+nginx -s reload: 重启nginx
+
+nginx -s stop: 停止nginx
+
+nginx -c: 指定配置文件
+
+
 
 ##### 提供静态内容
 
@@ -67,6 +77,12 @@ server {
 nginx -s reload
 
 通过在不终止服务器的情况下重载NGINX配置, 您将能够动态更改配置, 同时又不丢失任何数据包.
+
+
+
+
+
+
 
 
 

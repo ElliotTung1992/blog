@@ -64,3 +64,9 @@ sudo -l
 sudo -V
 ```
 
+切换成root用户
+
+```
+sudo -s
+```
+
