@@ -359,8 +359,6 @@ events {
 
 include    mime.types
 
-
-
 ##### mine
 
 在Nginx中, mime是一种配置指令, 用于设置MIME类型与文件扩展名的映射关系
@@ -370,13 +368,23 @@ include    mime.types
 cat /etc/nginx/mime.types
 ```
 
-
-
 ##### root
 
 在Nginx配置中, root指令用于设置虚拟服务器块的根目录, 即指明软件的根目录
 
 ```
+server {
+    listen 80;
+    server_name example.com;
+
+    root /var/www/html;
+
+    location / {
+        ...
+    }
+
+    ...
+}
 指定了该服务块的根目录是/var/www/html
 访问该服务器的网站时, Nginx会在/var/www/html文件夹中查找并提供相应的静态文件
 root /var/www/html;
@@ -384,7 +392,9 @@ root /var/www/html;
 
 
 
+#### 构建虚拟主机
 
+##### 基于域名的虚拟主机
 
 
 
