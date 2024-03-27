@@ -8,8 +8,8 @@
 
 ##### 主流的网关
 
-1. Zuul
-2. Spring Cloud Gateway
+1. Zuul(Servlet)
+2. Spring Cloud Gateway(Spring5 - WebFlux)
 3. Kong
 4. Traefik
 
