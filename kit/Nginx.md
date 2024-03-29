@@ -1,4 +1,4 @@
-##### Mac系用Nginx的安装:
+##### Mac系统Nginx的安装:
 
 brew search nginx.
 
