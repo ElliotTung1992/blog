@@ -27,3 +27,27 @@ oracle实现方案:
 select replace('field', substr('field', pos, len), '***') from 'table';
 ```
 
+##### 1.3 数据编码解码
+
+1.3.1 Base64实现编码解码
+
+Java实现Base64
+
+```
+    public static String encode(String blankText){
+        return  Base64.getEncoder().encodeToString(blankText.getBytes(StandardCharsets.UTF_8));
+    }
+    public static String encode(byte[] blankByte){
+        return Base64.getEncoder().encodeToString(blankByte);
+    }
+    public static String decode(String encodeText){
+        byte[] byte1 = Base64.getDecoder().decode(encodeText);
+        return new String(byte1,StandardCharsets.UTF_8);
+    }
+    public static String decode(byte[] encodeByte){
+        return new String(encodeByte,StandardCharsets.UTF_8);
+    }
+```
+
+
+
