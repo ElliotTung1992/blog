@@ -8,6 +8,7 @@
 6. ELK
 7. xxl-Job
 8. Nacos
+9. Jenkins
 
 
 

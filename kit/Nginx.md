@@ -1,43 +1,3 @@
-##### Mac系统Nginx的安装:
-
-brew search nginx.
-
-brew install nginx.
-
-brew uninstall nginx.
-
-查看安装信息: brew info nginx
-
-查看Nginx是否安装成功并检查其版本: nginx -v
-
-查看Nginx是否在运行: ps -ef | grep 'nginx'
-
-启动Nginx服务: brew services start nginx
-
-停止Nginx服务: brew services stop nginx
-
-重启Nginx服务: brew services restart nginx
-
-##### Nginx文件和目录
-
-查看Nginx安装信息: brew info Nginx.
-
-安装目录: **/opt/homebrew/Cellar/nginx/1.25.3**
-
-根目录: **/opt/homebrew/var/www**
-
-日志目录: **/opt/homebrew/var/log/nginx**
-
-配置文件: **/opt/homebrew/etc/nginx/nginx.conf**
-
-服务文件: **/opt/homebrew/etc/nginx/servers/**
-
-/etc/nginx 目录是NGINX服务器的默认配置根
-
-/etc/nginx/nginx.conf 文件是NGINX服务使用的默认配置入口点.
-
-/var/log/nginx 目录是NGINX的默认日志位置
-
 ##### NGINX命令
 
 nginx -h: 显示Nginx帮助菜单
@@ -50,7 +10,7 @@ nginx -t: 检查配置是否正确
 
 nginx: 启动nginx
 
-nginx -s reload: 重启nginx
+nginx -s reload: 通过在不终止服务器的情况下重载NGINX配置, 您将能够动态更改配置, 同时又不丢失任何数据包.
 
 nginx -s stop: 停止nginx
 
@@ -58,25 +18,42 @@ nginx -c: 指定配置文件
 
 
 
-##### 提供静态内容
+##### Nginx的使用场景
 
-server {
-        listen 80;
-        server_name www.elliot.com;
-        location / {
-            root   /opt/homebrew/var/www;
-            index  index.html index.htm;
-        }
+1. Http服务器/动静分离
+2. 静态服务器
+3. 反向代理
+4. 负载均衡
 
-}
+**运维架构:**
 
-此配置通过HTTP在端口80上从目录/opt/homebrew/var/www提供静态文件.
+1. 不停机更新
+2. 应对突发流量
+3. 域名更新/多域名访问
+4. 请求拦截/ip限制访问
+5. 请求重定向
 
-##### 优雅重载
+**静态服务器**
 
-nginx -s reload
+Nginx通常被用来当作静态服务器, 存储一些静态文件如: 图片、模版文件等
 
-通过在不终止服务器的情况下重载NGINX配置, 您将能够动态更改配置, 同时又不丢失任何数据包.
+静态资源上传和下载使用
+
+**反向代理**
+
+反向代理(Reverse Proxy)方式是指代理服务器接收Internet上的连接请求, 然后将请求转发给内部网络上的服务器, 并将从内部服务器得到的结果返回给Internet上请求连接的客户端, 此时代理服务器对外就表现为一个反向代理服务器.
+
+**负载均衡**
+
+将请求分摊到多个操作单元上进行执行.
+
+
+
+##### 反向代理的优点
+
+1. 通过对访问者隐藏内部服务的IP地址和端口, 为网站提供如Dos Ddos等攻击行为的防护, 为内部服务提供加密和SSL加速, 保护服务器安全.
+2. 为内部服务提供负载均衡
+3. 节约IP资源
 
 
 
@@ -86,9 +63,13 @@ nginx -s reload
 
 
 
-#### 高性能负载均衡
 
-##### HTTP负载均衡
+
+
+
+
+
+
 
 
 
