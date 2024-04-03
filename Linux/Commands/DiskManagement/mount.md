@@ -56,6 +56,52 @@ mount /dev/hda1 /mnt
 mount -o ro /dev/hda1 /mnt
 ```
 
+挂载网络磁盘:
+
+```
+# 确保已经安装了nfs-common包
+sudo apt-install nfs-common
+
+# 创建一个挂载点
+cd /
+mkdir nas
+
+# 挂载网络磁盘
+sudo mount -t nfs <网络磁盘IP>:/<共享目录> /nas
+
+# 异常: mount.nfs:access denied by server while mounting
+# 表示在尝试通过网络文件系统(NFS)挂载共享存储时, 服务器端拒绝了客户端的挂载请求
+# 在服务端进行配置:/etc/exports
+/nas 192.168.1.0/24(rw,sync,no_root_squash)
+- /nas 表示共享目录
+- rw 表示读写权限
+- ro 表示只读权限
+- sync 表示同步写入到内存和磁盘
+- no_root_squash 表示客户端以root用户访问时, 它将具有根目录的访问权限
+
+# 使/etc/exports生效
+exportfs -ra
+
+# 确保服务端正确安装了NFS服务, 并且相关的端口未被防火墙阻
+
+# 设置Linux启动自动挂载磁盘
+修改服务端配置文件: /etc/fstab
+/dev/sdb1 /mnt/mydisk ext4 defaults 0 2
+- /dev/sdb1 要挂载的磁盘分区
+- /mnt/mydisk 磁盘分区的挂载点
+- etx4 文件系统类型: ext3 ext4 ntfs vfat
+- defaults 挂载时使用的默认选项
+- 0 转换标识, 通常为0
+- 2 自检的优先级, 根分区组一般为1, 其他为2
+
+# 查看挂载配置是否正确
+mount -a
+
+# 查看系统上的文件系统磁盘使用情况
+cd /
+df -H
+```
+
 
 
 
