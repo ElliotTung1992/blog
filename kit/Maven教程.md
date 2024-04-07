@@ -1,5 +1,7 @@
 #### 1. 走进Maven
 
+---
+
 1.1.1 Maven的作用:
 
 1. 对Java项目进行构建
@@ -43,6 +45,8 @@
 
 #### 2. 项目对象模型POM(Project Object Model)
 
+---
+
 POM中可以指定以下配置:
 
 1. 项目依赖
@@ -69,6 +73,8 @@ groupId和artifactId一起定义了artifact在仓库中的位置.
 
 #### 3. Maven构建生命周期
 
+---
+
 一个典型的Maven构建生命周期由以下几个阶段组成
 
 | 阶段           | 处理     | 描述                                                         |
@@ -81,7 +87,13 @@ groupId和artifactId一起定义了artifact在仓库中的位置.
 | 安装: install  | 安装     | 安装打包的项目到本地仓库，以供其他项目使用                   |
 | 部署: deploy   | 部署     | 拷贝最终的工程包到远程仓库中, 以共享给其他开发人员或工程使用 |
 
-Maven有以下三个标准的生命周期:
+##### 参数
+
+1. -pl xxx:yyy :选项后加{groupId}:{artifactId}或者所选模块的相对路径(多个模块以逗号分隔)
+2. -am :表示同时处理选定模块所依赖的模块
+3. -Dmaven.test.skip=true :不执行测试用例, 也不编译测试用例类
+
+##### Maven有以下三个标准的生命周期
 
 (1): Clean生命周期
 
@@ -156,6 +168,8 @@ mvn package -Dmaven.test.skip=true //不但会跳过单元测试, 也会跳过�
 
 
 #### 4. Maven仓库
+
+---
 
 Maven仓库有三种类型:
 
@@ -234,6 +248,8 @@ Maven仓库默认在海外, 国内使用很慢, 更换为阿里云的仓库
 
 
 #### Maven插件
+
+---
 
 Maven有以下三个标准的生命周期:
 
@@ -394,6 +410,8 @@ scope的使用场景:
 // todo
 
 #### Maven异常
+
+---
 
 问题1:Java 17 和 maven-archetype-quickstart 出现错误：不再支持源选项 5
 

@@ -63,6 +63,14 @@ ls [abc]*.txt
 ls -il
 ```
 
+查找指令: java的安装目录:
+
+```
+which java
+ls -l /usr/bin/java
+ls -l /etc/alternatives/java
+```
+
 
 
 
