@@ -18,3 +18,9 @@ awk [选项参数] -f scriptfile var=value file(s)
 awk '{print $1,$4}' log.txt
 ```
 
+查询某个java进程的PID:
+
+```
+pa -ef|grep 'jave'|grep 'eureka'|awk '{print $2}'
+```
+
