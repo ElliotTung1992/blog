@@ -74,6 +74,14 @@ server {
         expires 30d;
     }
 }
+
+server {
+    listen       84;
+    server_name  localhost;
+    location ^~/image/ {
+        alias /nas/image/;
+    }
+}
 ```
 
 6. 配置日志记录

@@ -45,7 +45,67 @@ apt [options] [command] [package ...]
 
 列出所有已安装的包的版本信息: apt list --all-versions
 
+**实例:**
 
+查看一些可更新的包:
+
+```
+sudo apt update
+```
+
+升级安装包:
+
+```
+sudo apt upgrade
+```
+
+组合命令:
+
+```
+sudo apt update && sudo apt upgrade -y
+```
+
+安装Nginx包:
+
+```
+sudo apt install nginx
+```
+
+安装xxx包, 如果软件包已经存在, 则不升级:
+
+```
+sudo apt install <package_name> --no-upgrade
+```
+
+移除包可以使用remove命令:
+
+```
+sudo apt remove <package_name>
+```
+
+查找相关包:
+
+```
+sudo apt search <package_name>
+```
+
+查看包相关信息:
+
+```
+sudo apt show <package_name>
+```
+
+列出可更新的软件包:
+
+```
+sudo apt list --upgradeable
+```
+
+清除不再使用的依赖和库文件:
+
+```
+sudo apt autoremove
+```
 
 
 
