@@ -90,7 +90,11 @@ grep -r update /etc/acpi
 grep -v test *test*
 ```
 
+获取json字符串中指定类型的值:
 
+```
+echo '{"data":{"name": "dge","age": 12}}'|grep -o '"name": "[^"]*'|grep -o '[^"]*$'
+```
 
 
 
