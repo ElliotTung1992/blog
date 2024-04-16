@@ -107,5 +107,3 @@ nl testfile | sed '/oo/d'
 
 
 
-
-

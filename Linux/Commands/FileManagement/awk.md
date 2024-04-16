@@ -24,3 +24,9 @@ awk '{print $1,$4}' log.txt
 pa -ef|grep 'jave'|grep 'eureka'|awk '{print $2}'
 ```
 
+切割字符串, 定获取指定区域的数据:
+
+```
+echo '"name":"dge"'|awk -F'"' '{print $4}'
+```
+
