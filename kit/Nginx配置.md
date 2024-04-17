@@ -1,3 +1,7 @@
+##### 案例
+
+---
+
 1. 设置服务器监听的端口和文档根目录
 
 ```
@@ -126,6 +130,21 @@ server {
         deny all;
     }
 }
+```
+
+9. 拦截指定请求
+
+```
+server {
+    listen 80;
+    server_name example.com;
+
+    location /admin {
+        deny all;
+        return 403;
+    }
+}
+
 ```
 
 
