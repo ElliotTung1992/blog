@@ -192,9 +192,75 @@ echo $PATH
 
 $#表示传递给脚本的参数数量, $?表示上一个命令的退出状态等.
 
+#### Shell字符串
 
+---
 
+字符串是shell编程中最常用最有用的数据类型, 字符串可以用单引号, 也可以用双引号, 也可以不用引号.
 
+##### 单引号
+
+```
+str='this is a string'
+```
+
+单引号字符串的限制:
+
+- 单引号的任何自负都会原样输出, 单引号字符串中的变量是无效的.
+- 单引号字符串中不能出现单独一个的单引号, 但可以成对出现, 作为字符串拼接使用.
+
+##### 双引号
+
+```
+your_name="Mike"
+str="hello, I know you are \"${your_name}\" \n"
+```
+
+双引号的优点：
+
+- 双引号里可以有变量
+- 双引号可以出现转译字符
+
+##### 拼接字符串
+
+```
+your_name="runoob"
+# 使用双引号拼接
+greeting="hello, "$your_name" !"
+greeting_1="hello, ${your_name} !"
+echo $greeting  $greeting_1
+
+# 使用单引号拼接
+greeting_2='hello, '$your_name' !'
+greeting_3='hello, ${your_name} !'
+echo $greeting_2  $greeting_3
+```
+
+##### 获取字符串长度
+
+```
+string="abcd"
+echo ${#string}
+echo ${#string[0]}
+```
+
+##### 提取子字符串
+
+提取字符串第2到第4之间的字符:
+
+```
+string="helloworld"
+echo ${string:1:4}
+```
+
+##### 查找子字符串
+
+查找字符i或o的位置
+
+```
+string="runoob is a great site"
+echo `expr index "${string}" io`
+```
 
 
 

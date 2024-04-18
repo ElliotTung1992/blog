@@ -116,6 +116,14 @@ server {
         rewrite ^/foo$ /bar last;
     }
 }
+
+server {
+    listen       80;
+    server_name  localhost;
+    location / {
+        return 301 http://www.baidu.com
+    }
+}
 ```
 
 8. 配置IP访问限制
