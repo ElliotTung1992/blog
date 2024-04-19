@@ -262,6 +262,10 @@ string="runoob is a great site"
 echo `expr index "${string}" io`
 ```
 
+#### Shell 数组
+
+---
+
 
 
 
