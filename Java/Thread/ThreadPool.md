@@ -1,6 +1,17 @@
-#### 1. ThreadPoolExecutor
+#### 线程池
 
-##### 1.1 核心7大参数
+---
+
+##### Runnable接口和Runable接口的区别
+
+1. Runnable接口run方法无返回值; Callable接口call方法有返回值, 是个范性, 和Future和FutureTask配合可以用来获取异步执行的结果
+2. Runnable接口的run方法只能抛出运行时异常且无法捕获异常. Callable接口call方法允许抛出异常, 可以获取异常信息.
+
+#### ThreadPoolExecutor
+
+---
+
+##### 7大核心参数
 
 ```
 /**
@@ -67,15 +78,23 @@
 
 @param handler: 处理器; 当处理被阻塞时使用的处理器, 因为达到了线程的边界和队列的容量
 
+#### Executors
+
+##### FixedThreadPool
+
+创建一个固定线程数的线程池. 
+
+线程池的coreSize = maximumPoolSize
+
+空闲线程的存活时间是0毫秒
 
 
-#### 2. ScheduledThreadPoolExecutor
 
+#### 使用场景
 
+---
 
-#### 3. 应用场景
-
-##### 3. 1 框架
+##### 框架中的使用场景
 
 1. Spring中的任务调度
 1. Spring中的异步任务
