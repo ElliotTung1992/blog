@@ -80,15 +80,92 @@
 
 #### Executors
 
-##### FixedThreadPool
+##### FixedThreadPool 
+
+创建一个线程数固定的线程池, 超出的任务会在工作队列中等待空闲线程, 可以控制程序的最大并发数
 
 创建一个固定线程数的线程池. 
 
-线程池的coreSize = maximumPoolSize
+线程池的corepoolSize = maximumPoolSize
 
 空闲线程的存活时间是0毫秒
 
+使用的工作队列是链表实现的阻塞队列 - 长度是Intege的最大值
 
+##### CachedThreadPool
+
+创建一个短时间内处理大量工作的线程池, 会根据任务数量创建对应的线程, 并试图缓存线程以便重复使用, 如果线程60秒没有被使用, 则从缓存中移除.
+
+corePoolSize的长度是0
+
+maximumPoolSize的长度是Integer的最大值
+
+线程的存活时间是60秒
+
+工作队列是同步队列
+
+##### SingleThreadExecutor
+
+创建一个单线程线程池
+
+corePoolSize = maximumPoolSize
+
+线程的存活时间是0毫秒
+
+工作队列是链表实现的阻塞队列 - 长度是Intege的最大值
+
+##### ScheduledThreadPool
+
+创建一个数量固定的线程池, 支持执行定时性或周期性任务
+
+corePoolsize = 用户指定
+
+maximumPoolsize = Integer的最大值
+
+空闲线程存活时间是10毫秒
+
+工作队列是延迟工作队列
+
+##### WorkStealingPool
+
+创建时不需要设备任何参数, 则以当前机器的处理器个数作为线程个数, 此线程池会并行处理任务, 不能保证执行顺序.
+
+#### 使用线程池的规范
+
+---
+
+##### 创建线程或线程池时请指定有意义的线程名称, 方便出错时回溯
+
+自定义线程工厂, 并根据外部特征进行分组, 比如来自同一机房的调用, 把机房编号赋值给whatFeatureOfGroup
+
+```
+public class UserThreadFactory implements ThreadFactory {
+    private final String namePrefix;
+    private final AtomicInteger nextId = new AtomicInteger(1);
+    // 定义线程组名称，在利用 jstack 来排查问题时，非常有帮助
+		UserThreadFactory(String whatFeatureOfGroup) {
+				namePrefix = "FromUserThreadFactory's" + whatFeatureOfGroup + "-Worker-";
+		}
+    @Override
+    public Thread newThread(Runnable task) {
+        String name = namePrefix + nextId.getAndIncrement();
+        Thread thread = new Thread(null, task, name, 0, false);
+        System.out.println(thread.getName());
+        return thread;
+    }
+}
+```
+
+##### 线程资源必须通过线程池提供, 不允许在应用中自行显示创建线程
+
+线程池的好处是减少在创建和销毁线程上所消耗的时间以及系统资源的开销, 解决资源不足的问题.
+
+如果不使用线程池, 有可能造成系统创建大量同类线程而导致消耗完内存或者"过度切换的问题"
+
+##### 线程池不允许使用Executors去创建, 而是通过ThreadPoolExecutor的方式, 这样的处理方式让创建者更加明确线程池的运行规则, 规避资源耗尽的风险
+
+1. FixedThreadPool和SingleThreadPool - 允许的工作队列长度为Integer的最大值, 很可能堆积大量的请求, 从而导致OOM.
+2. CachedThreadPool和ScheduledThreadPool - 允许创建的线程数是Integer的最大值, 从而造成OOM.
 
 #### 使用场景
 
