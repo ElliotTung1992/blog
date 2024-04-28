@@ -24,7 +24,16 @@ read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] 
 
 **实例**
 
-案例一: 分割字符串
+简单读取
+
+```
+#!/bin/bash
+echo "输入网站名:"
+read website
+echo "您输入的网站名是:${wensite}"
+```
+
+分割字符串
 
 ```
 #!/bin/bash
