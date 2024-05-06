@@ -1,8 +1,12 @@
+#### Linux netstat
+
+---
+
 Linux netstat命令用于显示网络状态
 
 利用netstat指令可以让你得知整个Linux系统的网络情况.
 
-**语法**
+**语法:**
 
 ```
 netstat [-acCeFghilMnNoprstuvVwx][-A<网络类型>][--ip]
@@ -41,5 +45,7 @@ netstat [-acCeFghilMnNoprstuvVwx][-A<网络类型>][--ip]
 
 ```
 netstat -tuln | grep <port>
+
+netstat -tlnp | grep <port>
 ```
 
