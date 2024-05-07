@@ -1,3 +1,7 @@
+#### Linux find
+
+---
+
 Linux find命令用于在指定目录下查找文件和目录.
 
 他可以使用不用的选项来过滤和限制查找的结果.
@@ -20,8 +24,9 @@ find [路径] [匹配条件] [动作]
 - `-type type`：按文件类型查找，可以是 `f`（普通文件）、`d`（目录）、`l`（符号链接）等。
 - `-size [+-]size[cwbkMG]`：按文件大小查找，支持使用 `+` 或 `-` 表示大于或小于指定大小，单位可以是 `c`（字节）、`w`（字数）、`b`（块数）、`k`（KB）、`M`（MB）或 `G`（GB）。
 - `-mtime days`：按修改时间查找，支持使用 `+` 或 `-` 表示在指定天数前或后，days 是一个整数表示天数。
-- `-user username`：按文件所有者查找。
-- `-group groupname`：按文件所属组查找。
+- `-user username`：按文件所有者查找
+- `-group groupname`：按文件所属组查找
+- `-maxdepth`: 选项用于限制`find`命令在目录树中的搜索深度
 
 **动作:** 可选的，用于对匹配到的文件执行操作，比如删除、复制等。
 
@@ -133,5 +138,9 @@ ls -il 查询inode number
 find . -inum (inode number)
 ```
 
+删除指定目录下大小为0的文件:
 
+```
+find /path -maxdepth 1 -size 0 -delete
+```
 
