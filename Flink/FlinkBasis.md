@@ -78,6 +78,22 @@ Flink提交作业和执行任务, 需要几个关键组件:
 
 ##### Flink集群搭建/启动
 
+修改配置文件：
+
+```
+taskmanager相关配置
+jobmanager相关配置
+rest相关配置
+```
+
+解决Flink不兼容JDK9之后的解决方案:
+
+在Flink的配置文件添加如下配置
+
+```
+env.java.opts: --add-exports java.base/sun.net.util=ALL-UNNAMED
+```
+
 
 
 

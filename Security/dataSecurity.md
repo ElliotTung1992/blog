@@ -16,6 +16,16 @@ jasypt实现yml文件中敏感信息的加密处理
 
 密码学中的高级加密标准(Advanced Encryption Standard)
 
+##### MD5
+
+
+
+##### HS256
+
+
+
+##### SHA256
+
 #### 数据脱敏
 
 ---
