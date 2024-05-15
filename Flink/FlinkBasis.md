@@ -78,9 +78,10 @@ Flink提交作业和执行任务, 需要几个关键组件:
 
 ##### Flink集群搭建/启动
 
-启动报错:
+IDEA启动报错JDK9以后不兼容:
 
 ```
+# IDEA启动设置VM参数
 --illegal-access=deny --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED
 ```
 
@@ -94,15 +95,23 @@ rest相关配置
 
 解决Flink不兼容JDK9之后的解决方案:
 
-在Flink的配置文件添加如下配置
-
 ```
+在Flink的配置文件添加如下配置
 env.java.opts: --add-exports java.base/sun.net.util=ALL-UNNAMED
 ```
 
+Flink启动命令
 
+```
+./bin/下的命令
+```
 
+##### 提交job的两种方式：
 
+1. WebUI提交job
+2. 命令行提交job
+
+./bin/flink run -m localhost:8081 -c <ClassName> ./xx.jar
 
 
 
