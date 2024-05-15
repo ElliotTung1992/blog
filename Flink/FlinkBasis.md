@@ -78,6 +78,12 @@ Flink提交作业和执行任务, 需要几个关键组件:
 
 ##### Flink集群搭建/启动
 
+启动报错:
+
+```
+--illegal-access=deny --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED
+```
+
 修改配置文件：
 
 ```
