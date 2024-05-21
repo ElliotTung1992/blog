@@ -64,6 +64,8 @@ echo "It is a test" > myfile
 echo `date`
 ```
 
+
+
 #### Shell printf命令
 
 ---
@@ -96,6 +98,8 @@ printf "hello, shell\n"
 
 **%-4.2f** 指格式化为小数，其中 **.2** 指保留2位小数
 
+`%x`：十六进制数
+
 ##### printf的转译序列
 
 | \a    | 警告字符，通常为ASCII的BEL字符                               |
@@ -110,3 +114,12 @@ printf "hello, shell\n"
 | \\    | 一个字面上的反斜杠字符                                       |
 | \ddd  | 表示1到3位数八进制值的字符。仅在格式字符串中有效             |
 | \0ddd | 表示1到3位的八进制值字符                                     |
+
+##### 案例:
+
+线程ID转换成16进制:
+
+```
+printf '%x\n' tid 
+```
+
