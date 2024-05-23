@@ -23,6 +23,23 @@
 -Xms2G -Xmx5G
 ```
 
+##### 垃圾回收器
+
+为了提高应用程序的稳定性, 选择正确的垃圾收集算法至关重要.
+
+JVM四种类型的GC实现:
+
+```
+串行垃圾收集器
+-XX:+UseSerialGC
+并行垃圾收集器
+-XX:+UseParallelGC
+CMS垃圾收集器
+-XX:+UseConcMarkSweepGC
+G1垃圾收集器
+-XX:+UseG1GC
+```
+
 ##### GC日志记录
 
 在生产环境上一定会配置答应GC日志的参数
