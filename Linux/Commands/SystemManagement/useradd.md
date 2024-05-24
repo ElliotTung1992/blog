@@ -60,3 +60,35 @@ useradd -d /home/myd tt
 useradd caojh -u 544
 ```
 
+创建hadoop用户:
+
+当你使用useradd -s /bin/bash时, 你正在为新用户指定Bash作为其默认shell
+
+```
+useradd -m hadoop -s /bin/bash
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

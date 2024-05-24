@@ -45,3 +45,9 @@ adduser -r kk
 adduser -d /home/myf kk
 ```
 
+可为hadoop用户增加管理员权限:
+
+```
+adduser hadoop sudo
+```
+
