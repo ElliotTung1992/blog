@@ -58,6 +58,28 @@
 -XX:NewRatio=1
 ```
 
+##### 显示指定永久代/元空间的大小
+
+JDK1.8之前永久代还没有被彻底移除的时候通常通过下面的参数来调节方法区的大小:
+
+```
+-XX:PermSize=N
+-XX:MaxPermSize=N
+```
+
+JDK1.8的时候, 方法区(HotSpot的永久代)被彻底移除了, 取而代之的是元空间, 元空间使用的是本地内存.
+
+```
+-XX:MetaspaceSize=N
+-XX:MaxMetaspaceSize=N
+```
+
+Metaspace的初始值量并不是`-XX:MetaspaceSize`设置, 无论`-XX:MetaspqceSize`配置什么值, 对于64位JVM来说, Metaspace的初始容量是21807104.
+
+Metaspace由于使用不断扩容到`-XX:MetaspaceSize`参数指定的量, 就会发生FGC, 且之后每次Metaspace扩容都会发生Fill GC.
+
+也就是说, MetaspaceSize表示Metaspace使用过程中触发Full GC的阀值, 只对触发起作用.
+
 ##### 垃圾回收器
 
 为了提高应用程序的稳定性, 选择正确的垃圾收集算法至关重要.

@@ -7,10 +7,10 @@
 这些命令在JDK安装目录下的bin目录下:
 
 1. `jps`(JVM Process Status): 类似UNIX的`ps`命令. 用于查看所有Java进程的启动类、传入参数和Java虚拟机参数等信息.
-2. jstat
-3. jinfo
-4. jmap(Memory Map for Java): 生成堆转储快照.
-5. jhat
+2. `jstat`(JVM Statistics Monitoring Tool): 用于收集HotSpot虚拟机各方面的运行数据.
+3. `jinfo`(Configuration Info for Java): 显示虚拟机配置信息
+4. `jmap`(Memory Map for Java): 生成堆转储快照.
+5. `jhat`(JVM Heap Dump Browser): 用于分析heapdump文件, 它会建立一个HTTP/HTML服务器, 让用户可以在浏览器上查看分析结果. JDK9移除了jhat.
 6. `jstack` (Stack Trace for Java): 生成虚拟机当前时刻的线程快照, 线程快照就是当前虚拟机内每一条线程正在执行的方法堆栈信息集合.
 
 ##### jps: 查看所有Java进程
@@ -28,6 +28,33 @@ jps -v
 jps -m
 ```
 
+##### jstat: 监视虚拟机各种运行状态信息
+
+jstat(JVM Statistics Monitoring Tool)用于监视虚拟机各种运行状态信息的命令行工具.
+
+它可以显示本地或者远程虚拟机进程中的类信息、内存、垃圾收集、JIT编译等运行数据, 在没有GUI, 只提供纯文本控制台环境的服务器上, 它将是运行期间定位虚拟机性能问题的首选工具.
+
+jstat命令使用格式:
+
+```
+jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
+
+显示ClassLoader的相关信息: jstat -class vmid;
+显示JIT编译的相关信息: jstat -compiler vmid;
+显示与GC相关的堆信息: jstat -gc vmid;
+显示各个代的容量及使用情况: jstat -gccapacity vmid;
+显示新生代信息: jstat -gcnew vmid;
+显示新生代大小与使用情况: jstat -gcnewcapacity vmid;
+显示老年代和永久代的行为统计: jstat -gcold vmid;
+显示老年代的大小: jstat -gcoldcapacity vmid;
+显示永久代大小: jstat -gcpercapacity vmid;
+显示垃圾收集信息: jstat -gcutil vmid;
+```
+
+##### jinfo: 实时查看和调整虚拟机各项参数
+
+`jinfo -flags vmid`: 输出当前jvm进程的全部参数和系统属性(第一部分是系统的属性, 第二部分是JVM的参数)
+
 ##### jmap: 生成堆转储快照
 
 `jmap`(Memory Map for Java)命令用于生成堆存储快照. 
@@ -41,6 +68,23 @@ jmap -heap [pid]
 jmap -histo:live [pid]|more 
 # dump堆
 jmap -dump:live,format=b,file=xxx.xxx [pid]
+```
+
+##### jhat: 分析heapdump文件
+
+`jhat`用于分析heapdump文件, 它会建立一个HTTP/HTML服务器, 让用户在浏览器上查看分析结构.
+
+```
+C:\Users\SnailClimb>jhat C:\Users\SnailClimb\Desktop\heap.hprof
+Reading from C:\Users\SnailClimb\Desktop\heap.hprof...
+Dump file created Sat May 04 12:30:31 CST 2019
+Snapshot read, resolving...
+Resolving 131419 objects...
+Chasing references, expect 26 dots..........................
+Eliminating duplicate references..........................
+Snapshot resolved.
+Started HTTP server on port 7000
+Server is ready.
 ```
 
 ##### jstack: 生成虚拟机当前时刻的线程快照
