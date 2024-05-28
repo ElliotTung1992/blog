@@ -148,6 +148,40 @@ Flink为各种场景提供了不同的部署模式:
 
 ##### 实现YARN运行模式 - 会话模式
 
+动态分配资源
+
+1. webUI提交任务
+2. 命令行提交任务
+
+```
+./bin/flink run -c <ClassName> ./xx.jar
+```
+
+关闭会话模式
+
+1. echo "stop" | ./bin/yarn-session.sh -id application_1716558971020_0007
+2. web页面关闭
+
+##### 实现YARN运行模式 - 单作业模式
+
+启动单作业模式:
+
+```
+./bin/flink run -t yarn-per-job -c <ClassName> ./xx.jar
+```
+
+关闭单作业模式：
+
+1. Web Cancel Job
+2. 命令行关闭
+
+```
+bin/flink list -t yarn-per-job -Dyarn.application.id=<app_id>
+bin/flink cancel -t yarn-per-job -Dyarn.application.id=<app_id>
+```
+
+
+
 
 
 

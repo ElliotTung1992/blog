@@ -149,17 +149,14 @@ JVM提供了一些参数, 这些参数将堆内存存储到一个物理文件中
 -XX:+UseGCOverheadLimit
 ```
 
+##### JMX监控Tomcat运行情况
 
-
-
-
-
-
-
-
-
-
-
+```
+-Dcom.sun.management.jmxremote                     //设置JVM允许远程jmx进行调用查看
+-Dcom.sun.management.jmxremote.port=9500           //设置JVM调用查看的端口为9500
+-Dcom.sun.management.jmxremote.ssl=false           //设置JVM远程不能使用SSL方式进行调用
+-Dcom.sun.management.jmxremote.authenticate=false  //设置JVM查看不需要权限
+```
 
 
 
