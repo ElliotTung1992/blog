@@ -88,7 +88,30 @@ redis-cli -h <Redis_IP_Address> ping
 
 ---
 
+不允许远程访问
+
 ```
-bind 127.0.0.1 ::1 #不允许远程访问
+bind 127.0.0.1 ::1 
 ```
 
+-DENIED Redis is running in protected mode because protected mode is enabled, no bind address was specified, no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface. If you want to connect
+
+```
+protected-mode no
+```
+
+#### Redis客户端
+
+---
+
+```
+redis-cli -h 127.0.0.1 -p 6379
+```
+
+#### Redis常见应用场景
+
+---
+
+1. 缓存
+2. 分布式锁
+3. 限流方案

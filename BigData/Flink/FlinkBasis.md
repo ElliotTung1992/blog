@@ -180,13 +180,105 @@ bin/flink list -t yarn-per-job -Dyarn.application.id=<app_id>
 bin/flink cancel -t yarn-per-job -Dyarn.application.id=<app_id>
 ```
 
+##### 实现YARN运行模式 - 应用模式
 
+启动应用模式:
 
+```
+bin/flink run-application -t yarn-application -c <ClassName> ./xx.jar
+```
 
+关闭应用模式:
 
+1. 网页取消Job
+2. 命令行关闭
 
+```
+bin/flink list -t yarn-application -Dyarn.application.id=<app_id>
 
+bin/flin cancel -t yarn-application -Dyarn.application.id=<app_id>
+```
 
+上传HDFS提交:
+
+```
+# 上传flink的lib和plugins到HDFS上
+hadoop fs -mkdir /flink-disk
+hadoop fs -put lib/ /flink-disk
+hadoop fs -put plugins/ /flink-disk
+
+# 上传自己的jar包到HDFS
+hadoop fs -mkdir /flink-jars
+hadoop fs -put xxx.jar /flink-jars
+```
+
+提交作业：
+
+```
+bin/flink run-application -t yarn-application -Dyarn.provided.lib.dirs="hdfs://localhost:9000/flink-disk" -c <ClassName> hdfs://localhost:9000/flink-jars/xx.jar
+```
+
+##### 历史服务器
+
+创建存储目录:
+
+```
+hadoop fs -mkdir -p /logs/history-flink-job
+```
+
+在flink-config.yaml中添加如下配置:
+
+![image-20240528215203395](/Users/ganendong/Library/Application Support/typora-user-images/image-20240528215203395.png)
+
+启动历史服务器:
+
+```
+bin/historyserver.sh start
+```
+
+停止历史服务器:
+
+```
+bin/historyserver.sh stop
+```
+
+##### Flink系统架构
+
+![image-20240529213305474](/Users/ganendong/Library/Application Support/typora-user-images/image-20240529213305474.png)
+
+##### Flink运行时框架 - 并行度
+
+并行度设置:
+
+1. 代码算子设置
+1. 测试环境 - 设置本地WebUI启动
+1. 全局设置 - env
+1. 并行度未设置默认为本机的CPU核心数
+1. 提交Job - 设置并行度
+1. 提交Job - 命令行指定 -p <并行度>
+
+并行度优先级比较:
+
+算子 > 全局 > -p > 配置文件
+
+##### Flink运行时框架 - 算子(Operator Chain)
+
+1. 一对一(One to One, forwarding): 不需要重新分区, 不需要调整数据的顺序
+2. 充分区(Redistributing)
+3. 合并算子链: 并行度相同的一对一(one to one)算子操作, 可以直接链接在一起形成一个大的任务.
+
+禁用算子合并:
+
+1. 全局配置 - env
+2. 算子单独设置 - 影响该算子是否与前后的算子是否合并
+3. 开启新链条 - 只与前面的算子不合并
+
+什么时候禁用算子合并:
+
+1. 相邻之间的算子计算非常重
+2. 定位具体问题
+
+##### Flink运行时框架 - 任务槽
 
 
 

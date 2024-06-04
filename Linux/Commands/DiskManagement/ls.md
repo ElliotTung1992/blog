@@ -71,6 +71,12 @@ ls -l /usr/bin/java
 ls -l /etc/alternatives/java
 ```
 
+显示当前目录隐藏目录:
+
+```
+ls -al
+```
+
 
 
 
