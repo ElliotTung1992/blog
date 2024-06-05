@@ -30,3 +30,9 @@ groupadd -g 344 runoob
 此时在/etc/group文件中产生一个组ID(GID)是344的组数据
 ```
 
+查看系统所有的组:
+
+```
+cat /etc/group
+```
+
