@@ -113,15 +113,23 @@ mysql最大使用2个字节存储值需要的字节数
 1. 一张表中有且只有一个主键约束, 但可以有多个唯一约束
 2. 主键约束不允许字段值为null, 但是唯一约束允许字段值为null, 但是只能有一个null值 
 
-#### 数据库中的DML、DDL、DCL的含义和区别
+#### 数据库中的DML、DDL、DCL、DQL的含义和区别
 
 ---
 
-##### DML
+##### DML(Data Manipulation Language): 数据操控语言
 
-##### DDL
+insert、update、delete
 
-##### DCL
+##### DDL(Data Definition Language): 数据定义语言
+
+create、drop、alter
+
+##### DQL(Data Query Language): 数据库查询语句
+
+select...from where ...
+
+
 
 
 

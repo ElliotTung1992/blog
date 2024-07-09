@@ -60,7 +60,7 @@ AOP采用了两种实现方式: 静态织入(AspectJ)和动态代理(Spring AOP)
 
 ##### AOP应用场景
 
-1. 同步: 分布式锁
+1. 分布式锁
 1. Spring事务: @Transaction
 1. Spring异步操作: @Async
 1. Spring缓存: @Cacheable
@@ -68,10 +68,14 @@ AOP采用了两种实现方式: 静态织入(AspectJ)和动态代理(Spring AOP)
 1. 统一异常拦截处理/Spring@RestControllerAdvice
 1. 权限
 1. 性能优化
+1. 统一业务校验
 
 
 
+##### AOP失效场景
 
+1. 方法不是public
+2. 内部方法调用
 
 
 

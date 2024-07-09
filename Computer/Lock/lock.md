@@ -40,9 +40,129 @@ AtomicInteger的使用: 线程池状态的控制
 
 
 
-#### 数据库锁
+#### 3. 数据库锁
 
+##### 3.1 数据库锁分类 - 颗粒度分类
 
+1. 全局锁 - 锁定数据库中所有的表
+   1. 读锁
+2. 表级锁  - 锁定整张表
+   1. 读锁
+   2. 写锁
 
-#### 分布式锁
+3. 行级锁 - 锁定对应的行数据
+
+##### 3.2 全局锁实现
+
+```
+# 添加全局锁
+flush tables WITH READ LOCK;
+
+# DQL
+select * from points;
+
+# DDL
+update points set points = 102 where id = '1801497529808982016';
+
+# 数据备份
+mysqldump -h192.168.200.202 -uroot -p1234 db01 > D:/db01.sql
+
+# 释放全局锁
+UNLOCK TABLES;
+```
+
+使用场景:
+
+1. 数据备份
+
+在开始数据库数据备份前进行加锁 - 全局读锁
+
+在加锁期间只能执行DQL, 无法执行DDL、DML保证数据的一致性
+
+数据库数据备份结束, 释放全局锁
+
+##### 3.3 表级锁
+
+表级锁分类
+
+1. 表锁
+2. 元数据锁
+3. 意向锁
+
+##### 3.3.1 表级锁 - 表锁
+
+表锁 - 读锁
+
+```
+# 客户端A
+# 添加读锁
+LOCK TABLES points read;
+
+# 查询
+select * from points;
+
+# DML 抛错
+update points set points = 104 where id = '1801497529808982016';
+
+# 释放读锁
+UNLOCK TABLES;
+```
+
+```
+# 客户端B
+# 在客户端A加锁期间 DML 阻塞 在客户端A释放锁执行操作
+update points set points = 104 where id = '1801497529808982016';
+```
+
+表锁 - 写锁
+
+```
+# 客户端A
+# 添加写锁
+LOCK TABLES points write;
+
+# DML 
+update points set points = 103 where id = '1801497529808982016';
+
+# 释放锁
+UNLOCK TABLES;
+```
+
+```
+# 客户端B
+# 在客户端写锁期间阻塞, 客户端A释放锁后查询结果
+select * from points;
+```
+
+##### 3.3.2 表级锁 - 元数据锁
+
+- 元数据锁(meta data lock), 该锁是系统自动控制的, 在访问一张表是自动上锁.
+
+- 元数据可以理解为数据库表结构, 元数据锁的作用是维护表结构的数据一致性, 避免DDL和DML之间发生冲突, 保证读写一致性.
+
+- Mysql引入了MDL, 当对一张表进行增删改查时, 加MDL共享读锁和共享写锁; 对表结构进行变更操作时加MDL排他锁
+- 共享锁之间相互兼容, 表示可边读边写; 共享锁和排他锁互斥, 在对表进行增删改查时, 无法对表进行变更.
+
+案例:
+
+```
+# 客户端A
+begin
+select * from points;
+commit;
+```
+
+```
+# 客户端B
+# 当客户端A的锁未释放, 客户端B的DDL语句一直处于阻塞阶段
+alter table points add column age int;
+```
+
+查看元数据锁：
+
+```
+select object_type,object_schema,object_name,lock_type,lock_duration from performance_schema.metadata_locks;
+```
+
+#### 4. 分布式锁
 
