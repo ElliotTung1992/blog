@@ -91,7 +91,7 @@ UNLOCK TABLES;
 
 ##### 3.3.1 表级锁 - 表锁
 
-表锁 - 读锁
+- 表锁 - 读锁
 
 ```
 # 客户端A
@@ -114,7 +114,7 @@ UNLOCK TABLES;
 update points set points = 104 where id = '1801497529808982016';
 ```
 
-表锁 - 写锁
+- 表锁 - 写锁
 
 ```
 # 客户端A
@@ -162,6 +162,42 @@ alter table points add column age int;
 
 ```
 select object_type,object_schema,object_name,lock_type,lock_duration from performance_schema.metadata_locks;
+```
+
+##### 3.3.3 表级锁 - 意向锁
+
+- 为了避免在执行DML时, 客户端A加的行锁和客户端B加的表锁的冲突, Mysql引入了意向锁
+- 意向锁使得客户端B在尝试加表锁时不用检查每行数据是否加了行锁, 直接根据是否有意向锁以及意向锁的类型来决定表锁是否添加成功, 减少了添加表锁的检查.
+
+意向锁分类:
+
+1. 意向共享锁(IS): 与表锁共享锁兼容, 与表锁排他锁互斥; 由语句`select * from lock in share mode.`添加
+2. 意向排他锁(IX): 与表锁共享锁和排他锁都互斥; 由语句`insert update delete select...for update`添加
+
+意向锁之间不会互斥
+
+```
+# 客户端A
+begin // 开启事务
+select * from user where id = 1 lock in share mode. // 添加意向共享锁
+
+# 客户端B
+lock tables user read; // 加锁成功
+lock tables user write; // 阻塞直到客户端A释放锁
+```
+
+```
+# 客户端A
+begin // 开启事务
+update user set age = 11 where name = 'Bruce' // 自动意向排他锁
+
+# 客户端B
+lock tables user read; // 阻塞直到客户端A释放锁
+```
+
+```
+# 查看意向锁是否添加成功
+select object_schema,object_name,index_name,lock_type,lock_mode,lock_data from performance_schema.data_locks;
 ```
 
 #### 4. 分布式锁
