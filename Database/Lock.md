@@ -284,8 +284,8 @@ select object_schema,object_name,index_name,lock_type,lock_mode,lock_data from p
 
 1. 共享锁(share locks)
 2. 排他锁(exclusive locks)
-3. 意向共享锁
-4. 意向排他锁
+3. 意向共享锁(intension shared lock)
+4. 意向排他锁(intension exclusive lock)
 
 ##### 3.2 共享锁
 
@@ -311,11 +311,27 @@ select * from <table> where ... for update
 DML语句
 ```
 
-##### 3.4 意向共享锁
+##### 3.4 意向锁
 
+意向锁是由数据库引擎自己维护的, 用户无法手动操作意向锁, 在对数据行加共享锁/排他锁之前, InnoDB会先获取该数据对应表的对应的意向锁.
 
+意向锁存在的意义:
 
-##### 3.5 意向排他锁
+如果一个事务在该表加共享锁或者排他锁, 则受到前一个事务控制的表级别意向锁的阻碍. 第二个事务在锁定表之前不需要检查这个表的页锁和行锁, 只需要检查表上的意向锁.
+
+##### 3.5 意向共享锁
+
+```
+# 事务要获取数据行的S锁, 必须先获取表的IS锁
+select * from <table> where ... lock in share mode.
+```
+
+##### 3.6 意向排他锁
+
+```
+# 事务要获取数据行的X锁, 必须先获取表的IX锁
+select * from <table> for update
+```
 
 
 
