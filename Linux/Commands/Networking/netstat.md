@@ -49,3 +49,9 @@ netstat -tuln | grep <port>
 netstat -tlnp | grep <port>
 ```
 
+查看服务器开放的端口:
+
+```
+netstat -an
+```
+
