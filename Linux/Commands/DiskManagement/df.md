@@ -88,6 +88,12 @@ none            5.0M     0   5.0M   0%     /run/lock
 none            1.5G  156K   1.5G   1%     /run/shm 
 ```
 
+显示磁盘挂载情况:
+
+```
+df -h
+```
+
 
 
 
