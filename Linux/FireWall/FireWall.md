@@ -23,7 +23,7 @@ systemctl stop firewalld
 查看firewalld状态:
 
 ```
-systemctl statue firewalld
+systemctl status firewalld
 ```
 
 禁用firewalld服务:

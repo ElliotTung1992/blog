@@ -27,7 +27,7 @@ nohup /root/runoot.sh &
 以下命令在后台执行root目录下的runoob脚本, 并重定向输入到runoob.log
 
 ```
-nohup /root/runoob.sh > runoob.sh 2>&1 &
+nohup /root/runoob.sh > runoob.log 2>&1 &
 ```
 
 2>&1 解释:
