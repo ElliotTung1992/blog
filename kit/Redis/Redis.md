@@ -18,6 +18,14 @@ systemctl stop redis-server
 systemctl start redis-server
 # 重启Redis服务
 systemctl restart redis-server
+```
+
+##### 常规重启Redis服务
+
+```
+# 重启redis服务
+systemctl restart redis
+
 # 查看Redis进程
 ps -ax|grep redis
 ```
@@ -94,9 +102,9 @@ redis-cli -h <Redis_IP_Address> ping
 bind 127.0.0.1 ::1 
 ```
 
+```
 -DENIED Redis is running in protected mode because protected mode is enabled, no bind address was specified, no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface. If you want to connect
 
-```
 protected-mode no
 ```
 
@@ -105,14 +113,25 @@ protected-mode no
 ---
 
 ```
+# redis 客户端登陆
 redis-cli -h 127.0.0.1 -p 6379
+
+# 验证
+auth <password>
 ```
 
 #### Redis常见应用场景
 
 ---
 
-1. 缓存
+1. 数据缓存 
+
+   > a. 配置信息
+
 2. 分布式锁
+
+   > redisson
+
 3. 限流方案
+
 4. 活动/积分商城每日领取上线

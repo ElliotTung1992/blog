@@ -124,12 +124,23 @@ firewall-cmd --permanent --remove-rich-rule='<RULE>'
 firewall-cmd --list-rich-rules
 ```
 
+
+
 #### iptables
 
-查看防火墙状态:
+---
+
+##### 防火墙基本使用:
 
 ```
 systemctl status iptables
+```
+
+##### 关闭防火墙
+
+```
+systemctl stop iptables
+systemctl disable iptables
 ```
 
 

@@ -38,3 +38,9 @@ last
 last -n 5 -R
 ```
 
+显示某个用户:
+
+```
+last <username>
+```
+
