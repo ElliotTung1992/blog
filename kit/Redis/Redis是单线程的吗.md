@@ -56,6 +56,84 @@ Redis 4.0 之前在处理客户端命令和 IO 操作时都是以单线程形式
 
 从以上的发展历程中，我们也能看出 Redis 的瓶颈并不在 CPU 上，即使是单线程 Redis 也能做到很快的响应，除非是遇到个别极其耗时的命令，这一块我们的 Redis 也在 4.0 版本做出了优化，但是我们是不是能更进一步优化 Redis 呢？从上图中我们可以看出主线程不光处理大量的命令，还需要处理大量的网络 IO，Redis6.0 就是基于此，将 IO 操作交由其他线程处理
 
+#### Lazy Free
+
+---
+
+惰性删除或延迟释放(Lazy Free), 指在删除key时, 采用异步方式延迟释放key所使用的内存, 该操作交给单独的字线程BIO(Background I/O)进行处理, 避免在用不删除KEY对Redis主线程的长期占用而影响系统的可用性.
+
+在删除超大key如单个key占用内存过多或单个key包含过多元素时, 同步删除会导致redis段时间不可用, 甚至会导致主动故障切换.
+
+在Redis 4.0版本开始提供惰性删除特性.
+
+##### Lazy Free使用场景
+
+1. 主动使用惰性删除特性
+2. 被动使用惰性删除特性
+
+##### 主动惰性删除
+
+`UNLINK`命令
+
+使用UNLINK删除集合键时, 会按照集合键的元素去估算释放该key的成本
+
+如果释放成本超过LAZYFREE_THRESHOLD, 则会采用Lazy Free方式进行处理
+
+`FLUSHALL/FLUSHDB`命令
+
+通过ASYNC选项来设置FLUSHALL或者FLUSHDB操作是否采用Lazy Free方式处理.
+
+##### 被动使用惰性删除
+
+```
+# 在内存到达最大限制需要逐出数据时使用
+# 建议关闭, 避免内存未及时释放
+lazyfree-lazy-eviction no
+# 在key过期时使用
+# 建议开启
+lazyfree-lazy-expire no
+# 隐式删除数据时, 如rename操作
+# 建议开启
+lazyfree-lazy-server-del no
+# 在对从句进行全量数据同步时
+# 建议关闭
+slave-lazy-flush no
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
