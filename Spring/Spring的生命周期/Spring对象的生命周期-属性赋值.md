@@ -97,3 +97,13 @@ protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable B
 
 Spring对@Autowired注解的实现逻辑位于: `AutowiredAnnotationBeanPostProcessor`
 
+#### @Qualifier注解的实现逻辑
+
+---
+
+当容器中存在类型相同的Bean时, 使用@Autowired使用报错
+
+这个时候需要指定Bean的@Qualifier注解
+
+Spring对@Qualifier注解的业务实现逻辑位于:`AutowireCandidateResolver`
+
