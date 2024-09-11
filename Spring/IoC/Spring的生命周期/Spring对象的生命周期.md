@@ -96,6 +96,7 @@ protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable
 		}
 
 		// Register bean as disposable.
+		// 5.将Bean注册为可丢弃的
 		try {
 			registerDisposableBeanIfNecessary(beanName, bean, mbd);
 		}
@@ -130,7 +131,13 @@ protected Object doCreateBean(String beanName, RootBeanDefinition mbd, @Nullable
 10. 销毁 - 是否实现Disposablebean接口
 11. 销毁 - 是否配置自定义的destory-method
 
+##### Bean的作用域
 
+1. singleton: 单例
+2. prototype: 每次从容器中获取Bean, 都会返回一个新的实例
+3. request: 每次HTTP请求就是创建一个新的Bean
+4. session: 同一个HTTP Session共享一个Bean
+5. Global-session
 
 
 
