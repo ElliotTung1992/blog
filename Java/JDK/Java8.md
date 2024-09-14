@@ -1,17 +1,28 @@
-#### 1. Java8新特性
+###  Java8
 
-##### 1.1 Lambda表达式
+---
 
-##### 1.2 方法引用
+#### Lambda表达式
 
-##### 1.3 默认方法
+##### 基础匿名函数
 
-##### 1.4 新工具
+1. Function
+2. Predicate
+3. Supplier
+4. Consumer
 
-##### 1.5 Stream API
 
-##### 1.6 Date Time API
 
-##### 1.7 Optional类
+##### 方法引用
+
+##### 默认方法
+
+##### 新工具
+
+##### Stream API
+
+##### Date Time API
+
+##### Optional类
 
  

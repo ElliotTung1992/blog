@@ -2,15 +2,24 @@
 
 配置文件地址: /etc/ntp.conf
 
-> /etc/ntp.conf
+##### /etc/ntp.conf
 
 - restrict: 控制对NTP服务器的访问权限.
 - server: 定义NTP服务器.
 
->  ntpq命令
+##### ntpq命令
 
 - -p <NTP服务器地址>: 该命令将显示当前NTP服务器的状态, 包括每个服务器的地址、参考ID等信息。
 
-> ntpdate命令
+##### ntpdate命令
 
 - -u <NTP服务器地址>: 用于一次性设置本地系统时钟, 使其与服务器同步.
+
+#### 重启ntp服务
+
+---
+
+```
+systemctl restart ntpd
+```
+
