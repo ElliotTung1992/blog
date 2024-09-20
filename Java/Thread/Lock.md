@@ -22,4 +22,4 @@
 
 1. synchronized修饰this关键字 - 对象锁
 2. synchronized修饰类对象 - 类锁
-3. synchronized对象普通对象 - 对象锁
+3. synchronized修饰自定义对象 - 对象锁
