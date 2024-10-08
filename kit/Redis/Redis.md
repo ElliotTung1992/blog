@@ -1,5 +1,9 @@
 #### Redis
 
+---
+
+
+
 #### Linux安装Redis单机版
 
 ---
@@ -29,6 +33,8 @@ systemctl restart redis
 # 查看Redis进程
 ps -ax|grep redis
 ```
+
+
 
 #### 搭建Redis集群
 
@@ -79,6 +85,16 @@ cluster slots
 cluster info
 ```
 
+##### Redis集群key设置规范
+
+1. 尽量使用短的key
+2. 使用规范的key约束: 使用`:`而不是`.`作为分隔符
+3. 使用统一的命名空间前缀
+4. 避免使用复杂的数据结构
+5. 使用有意义的key名
+
+
+
 #### Redis相关命令
 
 ---
@@ -91,6 +107,8 @@ cluster info
 远程访问命令：
 redis-cli -h <Redis_IP_Address> ping
 ```
+
+
 
 #### Redis配置文件
 
@@ -108,6 +126,8 @@ bind 127.0.0.1 ::1
 protected-mode no
 ```
 
+
+
 #### Redis客户端
 
 ---
@@ -118,7 +138,12 @@ redis-cli -h 127.0.0.1 -p 6379
 
 # 验证
 auth <password>
+
+# 切换database
+select 1
 ```
+
+
 
 #### Redis常见应用场景
 
