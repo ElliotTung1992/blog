@@ -42,6 +42,6 @@ file -i cat.md
 显示符号链接的文件类型：
 
 ```
-file /var/mail
+file -l /var/mail
 ```
 
