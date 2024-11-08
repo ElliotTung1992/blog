@@ -56,6 +56,7 @@ mkdir test_share
 
 ```
 mount -t nfs 203.3.248.10:/home/test/test_share /home/test/test_share
+mount -t nfs 12.103.0.85:/nas /nas
 ```
 
 使用root用户，将以上的挂载命令添加到/etc/rc.d/rc.local文件中
