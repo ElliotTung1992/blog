@@ -1,3 +1,23 @@
+#### 限流场景
+
+---
+
+##### 粗颗粒度
+
+1. 全局请求限流
+
+##### 细颗粒度 - 接口维度
+
+1. 用户
+2. 租户
+3. 流量
+
+##### 业务限流
+
+1. 查证接口设置租户每日查证上限
+
+
+
 #### 限流
 
 ---
@@ -16,8 +36,6 @@
 4. 信号量
 5. 漏桶算法
 6. 令牌流算法
-
-
 
 ##### 常见的解决方案比较
 
@@ -92,17 +110,11 @@
 
 使用Redis的`ZSET`命令实现Redis的滑动窗口算法
 
-##### 
-
 org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply
 
 org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration
 
 org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed
-
-
-
-
 
 ```
 --redis key名，用于保存限流维度下剩余令牌数量，request_rate_limiter.{id}.tokens
@@ -164,10 +176,6 @@ end
 return { allowed_num, new_tokens }
 
 ```
-
-
-
-
 
 
 
