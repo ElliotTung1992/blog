@@ -1,5 +1,5 @@
 
-##### start sql-client 
+##### start sql-client: 
 ./bin/sql-client.sh embedded -s yarn-session
 ./bin/sql-client.sh embedded -s yarn-session -i conf/sql-client-init.sql
 create database mydatabase;
@@ -10,7 +10,7 @@ drop database <database-name>;
 use <database-name>;
 quit;
 
-##### table
+##### table:
 show tables;
 desc <table-name>;
 create table test(id int, ts bigint, vc int) with ('connector' = 'print');
@@ -19,6 +19,14 @@ create table test2 as select id, ts from test;
 alter table test1 rename to test2;
 drop table [if exists] <table-name>;
 insert into sink select * from source;
+
+**Jobs:**
+
+show jobs;
+
+stop job <jobId> with savepoint;
+
+
 
 简单测试建表语句:
 ```
@@ -30,7 +38,7 @@ row_time AS cast(CURRENT_TIMESTAMP as timestamp(3)),
 WATERMARK FOR row_time AS row_time - INTERVAL '5' SECOND
 ) WITH (
 'connector' = 'datagen',
-'rows-per-second' = '10',
+'rows-per-second' = '2',
 'fields.dim.length' = '1',
 'fields.user_id.min' = '1',
 'fields.user_id.max' = '100000',
@@ -455,6 +463,57 @@ use modules hive,core;
 
 load module hive with('hive-version'='2.3.9');
 unload module hive;
+```
+
+**使用savepoint:**
+
+```
+建表语句:
+CREATE TABLE source (
+    id INT,
+    ts BIGINT,
+    vc INT
+) WITH (
+    'connector' = 'datagen',
+    'rows-per-second'='1',
+    'fields.id.kind'='random',
+    'fields.id.min'='1',
+    'fields.id.max'='10',
+    'fields.ts.kind'='sequence',
+    'fields.ts.start'='1',
+    'fields.ts.end'='1000000',
+    'fields.vc.kind'='random',
+    'fields.vc.min'='1',
+    'fields.vc.max'='100'
+);
+
+CREATE TABLE sink (
+    id INT,
+    ts BIGINT,
+    vc INT
+) WITH (
+'connector' = 'print'
+);
+
+
+提交作业:
+insert into sink select * from source;
+
+查看job列表:
+show jobs;
+
+停止作业触发savepoint:
+SET state.checkpoints.dir='hdfs://10.211.55.4:8020/chk';
+SET state.savepoints.dir='hdfs://10.211.55.4:8020/sp';
+STOP JOB '228d70913eab60dda85c5e7f78b5782c' WITH SAVEPOINT;
+
+从savepoint恢复:
+SET execution.savepoint.path='hdfs://10.211.55.4:8020/sp/savepoint-dd0ed6-7074f0c090f0';
+set 'execution.savepoint.ignore-unclaimed-state' = 'true';
+
+恢复后重置路径:
+RESET execution.savepoint.path;
+
 ```
 
 
