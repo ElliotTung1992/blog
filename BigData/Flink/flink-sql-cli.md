@@ -516,6 +516,30 @@ RESET execution.savepoint.path;
 
 ```
 
+**使用Catalog:**
+
+```
+查看catalogs:
+show catalogs;
+show current catalog;
+
+使用指定的catalog:
+use catalog <catalog_name>;
+
+创建MysqlCatalog:
+CREATE CATALOG my_jdbc_catalog WITH(
+    'type' = 'jdbc',
+    'default-database' = 'elliot',
+    'username' = 'root',
+    'password' = 'dge_1992@163.com',
+    'base-url' = 'jdbc:mysql://10.211.55.2:3306'
+);
+
+
+select * from default_catalog.default_database.source;
+select * from ws2 t1 inner join default_catalog.default_database.source t2 on t1.id = t2.id;
+```
+
 
 
 
