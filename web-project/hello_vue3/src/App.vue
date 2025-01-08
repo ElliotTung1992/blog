@@ -1,7 +1,7 @@
 <template>
     <div class="app">
         <h1>你好啊!</h1>
-        <Person3/>
+        <WatchEffect/>
     </div>
 </template>
 
@@ -11,10 +11,19 @@
     import Person3 from './components/Person3.vue'
     import Car from './components/Car.vue'
     import Car2 from './components/Car2.vue'
+    import WatchRef from './components/WatchRef.vue'
+    import WatchRefObj from './components/WatchRefObj.vue'
+    import WatchReactiveObj from './components/WatchReactiveObj.vue'
+    import WatchObjParam from './components/WatchObjParam.vue'
+    import WatchObjMultiParam from './components/WatchObjMultiParam.vue'
+    import WatchEffect from './components/WatchEffect.vue'
 
     export default {
         name: 'App',
-        components:{Person, Person2, Person3, Car, Car2}
+        components:{Person, Person2, Person3, 
+            Car, Car2, WatchRef, WatchRefObj,
+            WatchReactiveObj, WatchObjParam,
+            WatchObjMultiParam, WatchEffect}
     }
 </script>
 
