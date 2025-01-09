@@ -1,14 +1,15 @@
 <template>
     <div class="app">
-        <h1>你好啊!</h1>
-        <WatchEffect/>
+        <PropsTest />
     </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup name="App">
     import Person from './components/Person.vue'
     import Person2 from './components/Person2.vue'
     import Person3 from './components/Person3.vue'
+    import Person4 from './components/Person4.vue'
+    import Person5 from './components/Person5.vue'
     import Car from './components/Car.vue'
     import Car2 from './components/Car2.vue'
     import WatchRef from './components/WatchRef.vue'
@@ -17,14 +18,20 @@
     import WatchObjParam from './components/WatchObjParam.vue'
     import WatchObjMultiParam from './components/WatchObjMultiParam.vue'
     import WatchEffect from './components/WatchEffect.vue'
+    import Ref from './components/Ref.vue'
+    import PropsTest from './components/PropsTest.vue'
+    
+    import {reactive} from 'vue'
+    import {type Persons} from '@/types'
 
-    export default {
-        name: 'App',
-        components:{Person, Person2, Person3, 
-            Car, Car2, WatchRef, WatchRefObj,
-            WatchReactiveObj, WatchObjParam,
-            WatchObjMultiParam, WatchEffect}
-    }
+    let personList = reactive<Persons>([
+        {id:'dasdasdnsah1', name:'zhangsan', age:18},
+        {id:'dasdasdnsah2', name:'lisi', age:60},
+        {id:'dasdasdnsah3', name:'wangwu', age:5, x:1}
+    ])
+
+    let num = 9
+
 </script>
 
 <style>
