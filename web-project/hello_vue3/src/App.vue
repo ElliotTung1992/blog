@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <PropsTest />
+        <Dog/>
     </div>
 </template>
 
@@ -20,19 +20,31 @@
     import WatchEffect from './components/WatchEffect.vue'
     import Ref from './components/Ref.vue'
     import PropsTest from './components/PropsTest.vue'
+    import LifeCycle from './components/LifeCycle.vue'
+    import LifeCycleVue3 from './components/LifeCycleVue3.vue'
+    import Dog from './components/Dog.vue'
     
-    import {reactive} from 'vue'
+    import {reactive, ref} from 'vue'
     import {type Persons} from '@/types'
 
-    let personList = reactive<Persons>([
-        {id:'dasdasdnsah1', name:'zhangsan', age:18},
-        {id:'dasdasdnsah2', name:'lisi', age:60},
-        {id:'dasdasdnsah3', name:'wangwu', age:5, x:1}
-    ])
+    let isShow = ref(true)
 
-    let num = 9
+</script> 
 
-</script>
+<!-- <script lang="ts">
+
+    import LifeCycle from './components/LifeCycle.vue';
+
+    export default {
+        name:'App',
+        components:{LifeCycle},
+        data(){
+            return {
+                isShow: true
+            }
+        }
+    }
+</script> -->
 
 <style>
     .app {
