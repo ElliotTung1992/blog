@@ -1,6 +1,6 @@
 <template>
     <div class="person">
-        <h2>{{ num }}</h2>
+        <h2>{{ num }},放大十倍之后:{{ bigNum }}</h2>
         <button @click="sumUp">点我加1</button>
         <hr>
         <img v-for="(dog,index) in dogList" :src="dog" :key="index"><br>
@@ -9,22 +9,12 @@
 </template>
 
 <script setup lang="ts">
-    import {ref,reactive} from 'vue'
-    import axios from 'axios'
+    import useSum from '@/hooks/useSum.ts'
+    import useDog from '@/hooks/useDog.ts'
 
-    let num = ref(0)
-    let dogList = reactive(['https://images.dog.ceo/breeds/pembroke/n02113023_5006.jpg'])
-    function sumUp(){
-        num.value += 1
-    }
-    async function getPic(){
-        try {
-            let result = await axios.get('https://dog.ceo/api/breed/pembroke/images/random')
-            dogList.push(result.data.message)
-        } catch (error) {
-            alert(error)
-        }
-    }
+    const {num,bigNum,sumUp} = useSum()
+    const {dogList,getPic} = useDog()
+
 </script>
 
 <style scoped>
