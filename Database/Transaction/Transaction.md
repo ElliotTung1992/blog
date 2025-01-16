@@ -22,7 +22,7 @@
 1. 读未提交(Read Uncommitted)
 2. 读已提交(Read Committed)
 3. 可重复读(Repeatable Read)
-4. 可序列化(Serializable)
+4. 序列化(Serializable)
 
 ##### 不同事务隔离级别下存在的问题:
 
