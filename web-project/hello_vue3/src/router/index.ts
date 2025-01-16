@@ -20,9 +20,19 @@ const router = createRouter({
             path:'/news',
             component: News,
             children:[
+                // {
+                //     name: 'xinwenxiangqing',
+                //     path:'newsDetail/:id/:title/:content?',
+                //     component: NewsDetail,
+                //     props: true
+                // }
                 {
+                    name: 'xinwenxiangqing',
                     path:'newsDetail',
-                    component: NewsDetail
+                    component: NewsDetail,
+                    props(route){
+                        return route.query
+                    }
                 }
             ]
         },
