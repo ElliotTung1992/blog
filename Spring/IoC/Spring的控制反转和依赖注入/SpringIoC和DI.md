@@ -22,6 +22,58 @@ DI(Dependency Injection)的意思是"依赖注入", 它是IoC(控制反转)的�
 
 
 
+#### Bean定义的方式和依赖定义的方式有哪几种
+
+---
+
+1. 直接编码的方式
+
+2. 配置文件的方式
+
+3.  注解的方式
+
+
+
+#### Spring注解@Component、@Respository、@Service、@Controller的区别
+
+---
+
+Spring框架一开始使用xml的定义bean的配置, 查找和维护起来非常不方便.
+
+Spring 2.5为我们引入了自动扫描机制, 它可以在类路径下寻找标注了这些注解的类, 并将这些类纳入Spring容器管理.
+
+
+
+#### Spring中Bean的作用域
+
+---
+
+##### 1. singleton
+
+在Spring容器中仅存在一个Bean实例, Bean是以单例的方式存在的, 也是Bean默认的作用域.
+
+##### 2. prototype
+
+每次向容器获取Bean, 都会返回一个新的实例.
+
+
+
+以下作用域只在Web应用中适用:
+
+##### 3. request
+
+每一次HTTP请求都会产生一个新的Bean, 该Bean仅在当前HTTP Request内有效.
+
+##### 4. session
+
+同一个HTTP Session共享一个Bean, 不同的HTTP Session使用不同的Bean
+
+##### 5. globle-session
+
+同一个全局Session共享一个Bean
+
+
+
 #### SpringIoC的三种注入方式
 
 ---
@@ -34,19 +86,11 @@ DI(Dependency Injection)的意思是"依赖注入", 它是IoC(控制反转)的�
 
 set方法注入: 就是通过setter方法将相应的依赖对象设置到被注入的对象中.
 
-##### 3. 接口注入
+##### 3. 工厂方法注入
 
-接口注入: 就是对象主体实现一个注入接口, 该接口会传入被依赖类的对象, 从而实现注入.
+a. 静态工厂注入: 通过调用静态工厂的方法来获取自己需要的对象
 
-
-
-#### Spring注解@Component、@Respository、@Service、@Controller的区别
-
----
-
-Spring框架一开始使用xml的定义bean的配置, 查找和维护起来非常不方便.
-
-Spring 2.5为我们引入了自动扫描机制, 它可以在类路径下寻找标注了这些注解的类, 并将这些类纳入Spring容器管理.
+b. 非静态工厂注入: 也成为实例工厂
 
 
 
