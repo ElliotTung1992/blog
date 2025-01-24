@@ -1,20 +1,28 @@
 <template>
     <div class="talk">
-        <button>获取一句土味情话</button>
+        <button @click="getLoveTalk">获取一句土味情话</button>
     </div>
     <ul>
-        <li v-for="talk in talkList" :key="talk.id">{{ talk.title }}</li>
+        <li v-for="talk in talkStore.talkList" :key="talk.id">{{ talk.title }}</li>
     </ul>
 </template>
 
 <script setup lang="ts">
     import { reactive } from 'vue';
+    import axios from 'axios'
+    import {nanoid} from 'nanoid'
+    import {useTalkStore} from '@/store/loveTalk'
 
-    let talkList = reactive([
-        {id:'dsads1', title: "哈哈"},
-        {id:'dsads2', title: "呵呵"},
-        {id:'dsads3', title: "嘻嘻"}
-    ])
+    const talkStore = useTalkStore()
+
+    talkStore.$subscribe((mutate, state)=> {
+        console.log('talkStore里面的数据发生变化了',mutate, state)
+        localStorage.setItem('talkList', JSON.stringify(state.talkList))
+    })
+
+    function getLoveTalk(){
+        talkStore.getATalk()
+    }
 </script>
 
 <style>
