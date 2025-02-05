@@ -1,50 +1,52 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import Props from '@/pages/01_props/Father.vue'
+import Event from '@/pages/02_custom-event/Father.vue'
+import Bus from '@/pages/03_mitt/Father.vue'
+import Model from '@/pages/04_v-model/Father.vue'
+import AttrsListeners from '@/pages/05_$attrs/Father.vue'
+import RefChildrenParent from '@/pages/06_$refs-$parent/Father.vue'
+import ProvideInject from '@/pages/07_provide-inject/Father.vue'
+import Pinia from '@/pages/08_pinia/Father.vue'
+import Slot from '@/pages/09_slot/Father.vue'
 
-// 创建一个路由器并暴露出去
-import { createRouter,createWebHashHistory,createWebHistory } from 'vue-router'
-
-import Home from '@/pages/Home.vue'
-import News from '@/pages/News.vue'
-import About from '@/pages/About.vue'
-import NewsDetail from '@/pages/NewsDetail.vue'
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes:[
-        {
-            name:'zhxuye',
-            path:'/home',
-            component: Home
-        },
-        {
-            name:'xinwen',
-            path:'/news',
-            component: News,
-            children:[
-                // {
-                //     name: 'xinwenxiangqing',
-                //     path:'newsDetail/:id/:title/:content?',
-                //     component: NewsDetail,
-                //     props: true
-                // }
-                {
-                    name: 'xinwenxiangqing',
-                    path:'newsDetail',
-                    component: NewsDetail,
-                    props(route){
-                        return route.query
-                    }
-                }
-            ]
-        },
-        {
-            name:'guanyu',
-            path:'/about',
-            component: About
-        },
-        {
-            path:'/',
-            redirect:'/home'
-        }
-    ]
+export default createRouter({
+	history: createWebHistory(),
+	routes: [
+		{
+			path: '/props',
+			component: Props
+		},
+		{
+			path: '/event',
+			component: Event
+		},
+		{
+			path: '/mitt',
+			component: Bus
+		},
+		{
+			path: '/model',
+			component: Model
+		},
+		{
+			path: '/attrs',
+			component: AttrsListeners
+		},
+		{
+			path: '/ref-parent',
+			component: RefChildrenParent
+		},
+		{
+			path: '/provide-inject',
+			component: ProvideInject
+		},
+		{
+			path: '/pinia',
+			component: Pinia
+		},
+		{
+			path: '/slot',
+			component: Slot
+		},
+	]
 })
-export default router
