@@ -68,6 +68,154 @@ convention-over-configuration: 约定大于配置
 
 
 
+#### SpringBoot自动配置相关源码
+
+---
+
+核心注解: EnableAutoConfiguration
+
+```
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@AutoConfigurationPackage
+@Import(AutoConfigurationImportSelector.class)
+public @interface EnableAutoConfiguration {
+
+	String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+
+	/**
+	 * Exclude specific auto-configuration classes such that they will never be applied.
+	 * @return the classes to exclude
+	 */
+	Class<?>[] exclude() default {};
+
+	/**
+	 * Exclude specific auto-configuration class names such that they will never be
+	 * applied.
+	 * @return the class names to exclude
+	 * @since 1.3.0
+	 */
+	String[] excludeName() default {};
+
+}
+```
+
+核心类: AutoConfigurationImportSelector
+
+```
+  # org.springframework.boot.autoconfigure.AutoConfigurationImportSelector#selectImports
+  
+  @Override
+	public String[] selectImports(AnnotationMetadata annotationMetadata) {
+	  // 判断是否开启自定配置, 默认为开启, 也可以配置参数关闭
+		if (!isEnabled(annotationMetadata)) {
+			return NO_IMPORTS;
+		}
+		// 获取文件的属性: spring-autoconfigure-metadata.properties
+		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+				.loadMetadata(this.beanClassLoader);
+		// 获取注解EnableAutoConfiguration的属性值		
+		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		// 获取项目所有依赖下的spring.factorie中key为“spring.boot.enableautoconfiguration”的集合
+		List<String> configurations = getCandidateConfigurations(annotationMetadata,
+				attributes);
+		// 对集合数据进行去重		
+		configurations = removeDuplicates(configurations);
+		// 获取注解剔除属性对应的数据
+		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+		checkExcludedClasses(configurations, exclusions);
+		// 从集合中剔除所有剔除属性相关的数据
+		configurations.removeAll(exclusions);
+		// 对候选集合进行过滤, @Condition相关注解进行匹配校验
+		configurations = filter(configurations, autoConfigurationMetadata);
+		fireAutoConfigurationImportEvents(configurations, exclusions);
+		// 返回真正需要自动配置的候选集合
+		return StringUtils.toStringArray(configurations);
+	}
+	
+	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata,
+			AnnotationAttributes attributes) {
+		// 只获取"spring.boot.enableautoconfiguration"对应的集合	
+		List<String> configurations = SpringFactoriesLoader.loadFactoryNames(
+				getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader());
+		Assert.notEmpty(configurations,
+				"No auto configuration classes found in META-INF/spring.factories. If you "
+						+ "are using a custom packaging, make sure that file is correct.");
+		return configurations;
+	}
+	
+	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
+	  // 从缓存中获取项目所有依赖下的spring.factories中的属性
+		MultiValueMap<String, String> result = cache.get(classLoader);
+		if (result != null) {
+			return result;
+		}
+
+		try {
+			Enumeration<URL> urls = (classLoader != null ?
+					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
+					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
+			result = new LinkedMultiValueMap<>();
+			while (urls.hasMoreElements()) {
+				URL url = urls.nextElement();
+				UrlResource resource = new UrlResource(url);
+				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+				for (Map.Entry<?, ?> entry : properties.entrySet()) {
+					List<String> factoryClassNames = Arrays.asList(
+							StringUtils.commaDelimitedListToStringArray((String) entry.getValue()));
+					result.addAll((String) entry.getKey(), factoryClassNames);
+				}
+			}
+			cache.put(classLoader, result);
+			return result;
+		}
+		catch (IOException ex) {
+			throw new IllegalArgumentException("Unable to load factories from location [" +
+					FACTORIES_RESOURCE_LOCATION + "]", ex);
+		}
+	}
+	
+	
+	private List<String> filter(List<String> configurations,
+			AutoConfigurationMetadata autoConfigurationMetadata) {
+		long startTime = System.nanoTime();
+		String[] candidates = StringUtils.toStringArray(configurations);
+		boolean[] skip = new boolean[candidates.length];
+		boolean skipped = false;
+		// 获取自动配置导入过滤器 @Condition相关注解
+		for (AutoConfigurationImportFilter filter : getAutoConfigurationImportFilters()) {
+			invokeAwareMethods(filter);
+			// 进行匹配判断
+			boolean[] match = filter.match(candidates, autoConfigurationMetadata);
+			for (int i = 0; i < match.length; i++) {
+				if (!match[i]) {
+					skip[i] = true;
+					skipped = true;
+				}
+			}
+		}
+		if (!skipped) {
+			return configurations;
+		}
+		// 过滤不需要自动配置的类
+		List<String> result = new ArrayList<>(candidates.length);
+		for (int i = 0; i < candidates.length; i++) {
+			if (!skip[i]) {
+				result.add(candidates[i]);
+			}
+		}
+		if (logger.isTraceEnabled()) {
+			int numberFiltered = configurations.size() - result.size();
+			logger.trace("Filtered " + numberFiltered + " auto configuration class in "
+					+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime)
+					+ " ms");
+		}
+		return new ArrayList<>(result);
+	}
+```
+
 
 
 
