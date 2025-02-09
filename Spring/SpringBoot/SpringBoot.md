@@ -72,6 +72,8 @@ convention-over-configuration: 约定大于配置
 
 ---
 
+SpringBoot核心思想: 约定优于配置(convention over configuration)
+
 核心注解: EnableAutoConfiguration
 
 ```
