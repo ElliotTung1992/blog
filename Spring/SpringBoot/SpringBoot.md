@@ -216,6 +216,13 @@ public @interface EnableAutoConfiguration {
 		}
 		return new ArrayList<>(result);
 	}
+	
+	// 获取自动配置导入过滤器
+	// 就是加载导入依赖下spring.factories中key为AutoConfigurationImportFilter.class全类目
+	protected List<AutoConfigurationImportFilter> getAutoConfigurationImportFilters() {
+		return SpringFactoriesLoader.loadFactories(AutoConfigurationImportFilter.class,
+				this.beanClassLoader);
+	}
 ```
 
 
