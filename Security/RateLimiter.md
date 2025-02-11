@@ -8,13 +8,14 @@
 
 ##### 细颗粒度 - 接口维度
 
-1. 用户
-2. 租户
-3. 流量
+1. 租户/渠道
+2. 用户
+3. 接口
 
-##### 业务限流
+##### 业务场景
 
 1. 查证接口设置租户每日查证上限
+1. 每人每天参与活动抽奖上限
 
 
 
@@ -22,17 +23,31 @@
 
 ---
 
-##### 什么是QPS
+##### 什么是QPS:
 
 每秒查询率（QPS, Queries-per-second）, 即单位时间单位计算资源处理的请求数据量.
 
 在大模型场景下, QPS的提升意味着模型推理速度的提高, 这能够为更多用户提供服务或降低模型推理的成本.
 
+##### 什么是TPS:
+
+TPS: Transactions Per Second的缩写, 也就是事务数/秒.
+
+客户机在发送请求时开始计时, 收到服务器响应后结束计时, 以此来计算使用的时间和完成的事务个数.
+
+##### 什么是并发量:
+
+系统能同时处理请求数/事务数
+
+##### 响应时间:
+
+一般取平均响应时间
+
 ##### 常见的解决方案
 
-1. 固定窗口算法
-2. 滑动窗口算法
-3. 滑动日志算法
+1. 固定窗口算法 - [开始时间和结束时间]
+2. 滑动窗口算法 - [List, Queue]
+3. 滑动日志算法 - [TreeMap]
 4. 信号量
 5. 漏桶算法
 6. 令牌流算法
@@ -108,7 +123,19 @@
 
 ##### Redis分布式限流 - 滑动窗口算法
 
+Redis的`ZSet`是有序集合, 通过`removeRage`删除过期的时间, 再判断`Zset`对应Key的长度.
+
 使用Redis的`ZSET`命令实现Redis的滑动窗口算法
+
+
+
+#### 令牌桶算法原理
+
+---
+
+该算法的基本原理是: 有一个容量为X的令牌桶, 每Y单位时间将Z个令牌放入桶中, 如果令牌桶中的数量超过X, 那么它将被丢弃.
+
+处理请求时, 需要先从桶中获取令牌, 如果拿到请求则处理请求, 如果拿不到令牌则拒绝请求.
 
 org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply
 
@@ -117,57 +144,58 @@ org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration
 org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed
 
 ```
---redis key名，用于保存限流维度下剩余令牌数量，request_rate_limiter.{id}.tokens
+// 存储token的key名
 local tokens_key = KEYS[1]
---redis key名，用于保存限流维度下最近获取令牌时间，request_rate_limiter.{id}.timestamp
+// 存储获取token时间的key名
 local timestamp_key = KEYS[2]
---redis.log(redis.LOG_WARNING, "tokens_key " .. tokens_key)
 
---生产速率，每秒生产多少个令牌
+// 往令牌桶存放令牌的速率
 local rate = tonumber(ARGV[1])
---容量
+// 令牌桶的最大容量
 local capacity = tonumber(ARGV[2])
---当前时间（秒级时间戳）
+// 当前时间
 local now = tonumber(ARGV[3])
---每个请求消耗的令牌个数
+// 每个请求消耗的令牌数
 local requested = tonumber(ARGV[4])
 
---填充时间=容量/生产速率
+// 填充满令牌桶所需的时间
 local fill_time = capacity/rate
---key过期时间设置为填充时间的2倍
+// redis对应key的失效时间
 local ttl = math.floor(fill_time*2)
 
---剩余令牌数量
+// 获取当前令牌桶
 local last_tokens = tonumber(redis.call("get", tokens_key))
---不存在key，则初始化令牌数量为最大容量
+// 如果当前令牌桶是空的
+// 情况一: 第一次访问
+// 情况二: 有一段时间未访问, token_key
 if last_tokens == nil then
   last_tokens = capacity
 end
 
---最近获取令牌秒级时间戳
+// 获取最近获取令牌的时间
 local last_refreshed = tonumber(redis.call("get", timestamp_key))
---不存在key，则last_refreshed = 0
+// 如果最近获取令牌的时间为空, 则设置为0
 if last_refreshed == nil then
   last_refreshed = 0
 end
 
---距离上次获取令牌时间相差多少秒
+// 计算最近获取令牌的时间间隔, 有最小限制
 local delta = math.max(0, now-last_refreshed)
---计算当前令牌数量（考虑delta时间内生成的令牌个数=delta*速率）
+// 计算出这段时间需要往令牌桶填充的令牌数, 有最大限制
 local filled_tokens = math.min(capacity, last_tokens+(delta*rate))
---当前令牌数量是否大于1
+// 判断是否允许访问
 local allowed = filled_tokens >= requested
+// 刷新令牌桶的数量
 local new_tokens = filled_tokens
 
+// 如果允许访问, 则消耗对应的令牌数
 local allowed_num = 0
---允许访问，新令牌数量-1，allowed_num=1
 if allowed then
   new_tokens = filled_tokens - requested
   allowed_num = 1
 end
 
-
---保存令牌个数和最近获取令牌时间
+// 刷新redis-key的失效时间
 if ttl > 0 then
   redis.call("setex", tokens_key, ttl, new_tokens)
   redis.call("setex", timestamp_key, ttl, now)
