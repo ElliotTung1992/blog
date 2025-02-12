@@ -113,10 +113,6 @@ TPS: Transactions Per Second的缩写, 也就是事务数/秒.
 
 ---
 
-##### 单机版限流 - Guava中的限流工具类RateLimiter
-
-使用令牌桶算法实现
-
 ##### Redis分布式限流 - 固定窗口算法
 
 使用Redis的`incr`和设置key的过期时间 
@@ -132,6 +128,93 @@ Redis的`ZSet`是有序集合, 通过`removeRage`删除过期的时间, 再判�
 #### 令牌桶算法原理
 
 ---
+
+##### 1. 单机版限流 - Guava中的限流工具类RateLimiter
+
+使用令牌桶算法实现
+
+源码分析:
+
+```
+
+// 当前令牌桶中令牌的数量   
+double storedPermits;
+
+// 令牌桶的最大容量  
+double maxPermits;
+
+// 多少时间往令牌桶中添加一个令牌  
+double stableIntervalMicros;
+
+// 下一个授权请求通过的时间  
+private long nextFreeTicketMicros = 0L; 
+
+// 获取令牌
+@CanIgnoreReturnValue
+public double acquire(int permits) {
+	// 预定本次请求所需要的Token数需要等待的时间
+  long microsToWait = reserve(permits);
+  // 进行等待
+  stopwatch.sleepMicrosUninterruptibly(microsToWait);
+  // 返回等待的秒数
+  return 1.0 * microsToWait / SECONDS.toMicros(1L);
+}
+
+// 预定本次请求所需要的Token数需要等待的时间
+final long reserve(int permits) {
+	// 校验申请通行证数量的合法性
+  checkPermits(permits);
+  // 并发访问所以需要加锁处理
+  synchronized (mutex()) {
+    return reserveAndGetWaitLength(permits, stopwatch.readMicros());
+  }
+}
+
+final long reserveAndGetWaitLength(int permits, long nowMicros) {
+  // 本次请求预定到Token的时间
+  long momentAvailable = reserveEarliestAvailable(permits, nowMicros);
+  // 计算等待时长
+  return max(momentAvailable - nowMicros, 0);
+}
+
+@Override
+final long reserveEarliestAvailable(int requiredPermits, long nowMicros) {
+  // 更新令牌桶的Token数, 补充令牌
+  resync(nowMicros);
+  long returnValue = nextFreeTicketMicros;
+  double storedPermitsToSpend = min(requiredPermits, this.storedPermits);
+  // 需要预付的令牌数, 并且计算下次发放Token的时间
+  double freshPermits = requiredPermits - storedPermitsToSpend;
+  long waitMicros =
+      storedPermitsToWaitTime(this.storedPermits, storedPermitsToSpend)
+          + (long) (freshPermits * stableIntervalMicros);
+  this.nextFreeTicketMicros = LongMath.saturatedAdd(nextFreeTicketMicros, waitMicros);
+  // 扣减本次请求所需的Token数
+  this.storedPermits -= storedPermitsToSpend;
+  // 返回本次发放Token的时间
+  return returnValue;
+}
+
+// 同步
+void resync(long nowMicros) {
+  // if nextFreeTicket is in the past, resync to now
+  // 如果当前时间大于下一次获取Token的时间, 则需要增加token数
+  if (nowMicros > nextFreeTicketMicros) {
+    // 计算需要填充的令牌数
+    double newPermits = (nowMicros - nextFreeTicketMicros) / coolDownIntervalMicros();
+    storedPermits = min(maxPermits, storedPermits + newPermits);
+    // 更新时间
+    nextFreeTicketMicros = nowMicros;
+  }
+}
+```
+
+SmoothRateLimiter的两个实现:
+
+1. SmoothBursty
+2. SmoothWarmingUp
+
+##### 2. 分布式版限流 - SpringBootGateway限流方案
 
 该算法的基本原理是: 有一个容量为X的令牌桶, 每Y单位时间将Z个令牌放入桶中, 如果令牌桶中的数量超过X, 那么它将被丢弃.
 
