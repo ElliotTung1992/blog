@@ -12,272 +12,91 @@
 
 
 
-#### 分布式锁实现方式 - 基于Redis实现
+####  阶段一
 
 ---
 
-**实现原理**: Redis的setNX(key, value);命令 - set value for key only if key does not exist. 
+实现功能: 使用Redis实现分布式锁
 
-```
-boolean isLock = redisClient.setNX(key, value);
+第一步加锁: SETNX(key, value);
 
-try{
+第二步对锁设置过期时间: EXPIRE(key, seconds);
 
-  // 执行业务逻辑
+存在的问题: 可能出现执行完加锁, 服务器挂了导致未执行设置锁过期时间, 出现死锁的情况.
 
-}finally{
 
-  unlock();
-}
-```
 
-**死锁问题**: 当程序在执行业务代码时, 无法再执行到下面的解锁指令, 从而导致出现死锁问题.
-
-```
-boolean isLock = redisClient.setNX(key, value);
-
-try{
-
-​	// 执行业务逻辑
-
-​	// 程序崩溃
-
-}finally{
-
-​	unlock();
-
-}
-```
-
-**解决方案:** 引入过期时间的概念, 过期时间时给当前这个key设置一定的存活时间, 当存活时间到期后, Redis就会自动删除这个过期的key, 即使在执行业务逻辑程序崩溃也能到期自动释放锁.
-
-```
-boolean isLock = redisClient.setNX(key, value);
-
-redisClient.expire(key, timeout);
-
-try{
-
-​	// 执行业务逻辑
-
-​	// 程序崩溃
-
-}finally{
-
-​	unlock();
-
-}
-```
-
-**解锁原理:** 
-
-删除key
-
-**错误删除锁问题:** 
-
-线程一获取锁成功, 但是执行业务时间过长导致锁过期.
-
-线程二获取锁成功.
-
-线程一执行业务完毕释放锁 - 线程二的锁.
-
-线程三获取锁成功.
-
-线程二和线程三存在并发问题.
-
-**解决方案:** 加入锁标识
-
-为了解决这种错误删除其他线程线程的锁这个问题, 需要在value字段里加入当前线程唯一标识, 线程在删除锁的时候需要和锁对应的value值进行比对, 只有是自己对应的标识时才可以进行锁删除.
-
-```
-String uuid = getUUId();
-
-boolean isLock = redisClient.setNX(key, uuid, timeout);
-
-try{
-
-​	// 执行业务逻辑
-
-}finally{
-
-​	if(redisClient.getKey(key) == uuid){
-
-​		unlock();
-
-​	}
-
-}
-```
-
-**异常场景:**
-
-线程一获取锁，并执行业务逻辑
-
-线程一执行完业务，比较锁对应的标识为自己加的锁, 进行删除时异常(线程挂起等异常)
-
-线程一对应的锁自动过期
-
-线程二获取到对应的锁
-
-线程一继续执行, 释放了锁
-
-线程三同时获取到了锁
-
-线程二和线程三存在并发问题
-
-**解决方案:** 比较和删除锁修改为原子操作 
-
-```
-String uuid = getUUId();
-
-boolean isLock = redisClient.setNX(key, uuid, timeout);
-
-try{
-
-​	// 执行业务逻辑
-
-}finally{
-
-​	redisClient.eval(delLuaScript, key, value);
-
-}
-```
-
-**引入Lua脚本实现原子操作:**
-
-lua脚本是一个非常轻量级的脚本语言, Redis底层天生支持lua脚本执行, 一个lua脚本中可以包含多条Redis命令, Redis会将整个lua脚本当作原子操作来执行, 从而实现聚合多条Redis指令的原子操作.
-
-**自动续租功能:**
-
-**现象：**
-
-在执行业务代码时, 由于执行业务时间过长导致锁自动失效, 然后锁自动释放, 在这种情况下其他线程会成功获取锁，导致产生并发问题.
-
-**原因:**
-
-设置的过期时间太短或者业务执行时间过长
-
-**解决思路:**
-
-开启一个定时任务, 自动刷新Redis加锁的超时时间
-
-```
-String uuid = getUUId();
-
-boolean isLock = redisClient.setNX(key, uuid, timeout);
-
-// 设置定时器
-
-new Scheduler(key, time, uuid, scheduleTime);
-
-try{
-
-​	// 执行业务逻辑
-
-}finally{
-
-​	redisClient.eval(delLuaScript, key, value);
-
-​	// 取消定时器
-
-​	cancelScheduler(uuid);
-
-}
-```
-
-定时器的逻辑:
-
-1. 判断Reids的锁是否是自己的
-2. 如果存在的话重新刷新过期时间
-
-**可重入锁:**
-
-**实现原理:**
-
-使用Redis中的Map数据结构*Map(key, uuid, lockcount);
-
-在加锁的时候增加锁次数, 在释放锁的时候减少锁次数
-
-**获取锁逻辑:**
-
-1. 判断锁是否不存在, 不存在则获取锁, 并记录加锁次数1
-2. 如果锁存在, 则判断锁是否已获取, 如果没有获取到锁则等待, 如果获取到锁则增加锁次数
-
-**释放锁逻辑:**
-
-1. 判断锁是否是当前线程的, 是则加锁次数-1, 如果次数为0则释放锁
-
-
-
-#### Redis和Redisson实现分布式锁的操作方法
+#### 阶段二
 
 ---
 
-#### 1. 基于setNX命令的分布式锁
+需解决的问题: 可能出现执行完加锁, 服务器挂了导致未执行设置锁过期时间, 出现死锁的情况.
 
-##### 1.1 加锁
+思路: 加锁指令和设置过期指令原子性操作, 要么全部成功, 要不全部失败
 
-使用Redis实现分布式锁, 最直接的想法是利用`setNX`和`expire`命令实现加锁.
+实现方案一: 使用Lua脚本
 
-在Redis中, `setNX`是set if not exists 如果不存在则设置.
+实现方案二: 使用`SET key value EX seconds`命令
 
-当一个线程执行`setnx`返回1, 说明key不存在设置成功, 该线程获得锁.
+存在的问题: 存在线程错误删除锁的现象
 
-当一个线程执行`setnx`返回0, 说明key已经存在, 获取锁失败.
+	1. 线程一加锁成功, 业务执行实现超长导致锁自动失效
+	1. 线程二加锁成功
+	1. 线程一业务执行结束, 释放锁(线程二加的锁)
+	1. 线程三加锁成功
+	1. 线程二和线程三存在并发场景
 
-##### 1.2 释放锁
 
-释放锁的话, 直接通过`DEL`命令删除对应的key即可.
 
-为了防止误删到其它的锁, 我们建议在设置key的时候设置对应的value(可以是线程号)来判断.
+#### 阶段三
 
-释放锁的时候, 应先比较对应的锁的value是否相等, value值可以的在加锁的时候当前线程的线程ID, 在删除
+---
 
-之前验证key对应的value是不是自己的线程ID, 避免锁的误释放.
+需解决的问题: 存在线程错误删除锁的现象
 
-##### 1.3 setnx的缺点
+思路: 对锁添加锁标识
 
-使用`setNX`命令设置key必须设置一个超时时间, 以保证即使key没有被显式释放, 这把锁也要在一定时间后自动释放.
+解决方案: 为了解决这种错误删除其它线程所加的锁, 需要在value字段设置当前线程的唯一标识, 线程在删除锁的时候需要和锁对应的value值进行比对, 只有相等才可以删除.
 
-可以使用`expire`命令设置锁超时时间. 避免出现死锁现象.
+存在的问题: 
 
-##### 1.4 存在的问题
+1. 线程一加锁成功, 执行相关的业务逻辑
+2. 线程一释放锁, 执行到锁删除的时候异常挂起
+3. 线程一的锁超时时间到, 自动释放
+4. 线程二加锁成功
+5. 线程一删除挂起的线程恢复删除锁(线程二的锁)
+6. 线程三加锁成功
+7. 线程二和线程三存在并发场景
 
-`setNX`和`expire`命令不是原子性操作的, 假设某个线程执行了`setNX`命令获取了锁, 但是还没来得及执行`expire`命令服务器挂掉了.
 
-这样这把锁就没有设置过期时间, 变成了死锁.
 
-#### 2. 基于set命令的分布式锁
+#### 阶段四
 
-##### 2.1 实现原理
+---
 
-redis的`set`命令支持在获取锁的同时设置key的过期时间
+需解决的问题: 存在线程错误删除锁的现象
 
-使用set命令加锁并设置锁过期时间：
+思路: 释放锁中value比对操作和删除key操作保证原子性
 
-```
-set lockKey uniqueValue EX 3 NX
-```
+解决方案: 使用Lua脚本实现值比对和删除
 
-lockKey: 锁的名称
+存在的问题: 锁的续租
 
-uniqueValue: 能够唯一标识锁的值
 
-NX: 只有在lockKey不存在的时候才能set成功
 
-EX: 过期时间设置(单位为秒). EX 3 表示这个lockKey有一个3秒自动过期的时间
+#### 阶段五
 
-##### 2.2 存在的问题
+---
 
-如果操作业务的时间大于过期时间, 就会出现锁提前过期的问题, 进而导致分布式锁失效, 如果这个锁的过期时间设置过长, 还会影响到性能问题.
+需解决的问题: 锁的续租
 
-##### 2.3 解决思路
+解决方案: 我们可以让获得锁的线程开启一个守护线程, 用来给即将过期的锁进行自动续租.
 
-我们可以让获得锁的线程开启一个守护线程, 用来给即将过期的锁进行自动续租.
 
-在JAVA的Redisson中就有一个看门狗机制, 已经帮我们实现了这个功能.
 
-#### 3. Redisson看门狗分布式锁
+#### Redisson看门狗分布式锁
+
+---
 
 Redisson中的分布式锁自带自动续租机制, 使用起来非常简单, 其提供了一个专门用来监控和续租锁的Watch Dog(看门狗),
 
@@ -293,7 +112,7 @@ Redisson中的分布式锁自带自动续租机制, 使用起来非常简单, �
 
 Redisson在获取锁之后, 会维护一个看门狗线程, 在每一个锁设置的过期时间的1/3处, 如果线程还未执行完业务, 则不断延长锁的有效期. 默认的锁过期时间是30秒, 可以通过lockWatchdoyTimeout参数来修改.
 
-每没过10秒, 看门狗就会执行续租操作, 将锁的超时时间重置为30秒. 看门狗续租前也会先判断是否需要执行续租操作, 需要才会执行续租, 否则取消续租操作.
+每过10秒, 看门狗就会执行续租操作, 将锁的超时时间重置为30秒. 看门狗续租前也会先判断是否需要执行续租操作, 需要才会执行续租, 否则取消续租操作.
 
 ##### 3.3 redisson分布式锁的关键点
 
@@ -313,9 +132,168 @@ lock.trylock(10, 30, TimeUnit.SECONDS); // 设置锁释放时间, 不会使用�
 lock.trylock(10, TimeUnit.SECONDS);
 ```
 
+##### 3.4 Redisson的WatchDog相关源码
 
+```
+    @Override
+    public void lock(long leaseTime, TimeUnit unit) {
+        try {
+        		// 进行加锁
+            lock(leaseTime, unit, false);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    // 进行加锁
+    private void lock(long leaseTime, TimeUnit unit, boolean interruptibly) throws InterruptedException {
+    		// 获取当前线程的线程id
+        long threadId = Thread.currentThread().getId();
+        // 尝试获取锁
+        Long ttl = tryAcquire(-1, leaseTime, unit, threadId);
+        // lock acquired
+        if (ttl == null) {
+            return;
+        }
 
+        CompletableFuture<RedissonLockEntry> future = subscribe(threadId);
+        pubSub.timeout(future);
+        RedissonLockEntry entry;
+        if (interruptibly) {
+            entry = commandExecutor.getInterrupted(future);
+        } else {
+            entry = commandExecutor.get(future);
+        }
 
+        try {
+        		// 如果一开始未获取到锁, 则再次尝试获取锁
+            while (true) {
+            		// 尝试获取锁
+                ttl = tryAcquire(-1, leaseTime, unit, threadId);
+                // lock acquired
+                if (ttl == null) {
+                    break;
+                }
+
+                // waiting for message
+                if (ttl >= 0) {
+                    try {
+                        entry.getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        if (interruptibly) {
+                            throw e;
+                        }
+                        entry.getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);
+                    }
+                } else {
+                    if (interruptibly) {
+                        entry.getLatch().acquire();
+                    } else {
+                        entry.getLatch().acquireUninterruptibly();
+                    }
+                }
+            }
+        } finally {
+            unsubscribe(entry, threadId);
+        }
+//        get(lockAsync(leaseTime, unit));
+    }
+    
+    // 尝试异步获取锁
+    private RFuture<Long> tryAcquireAsync(long waitTime, long leaseTime, TimeUnit unit, long threadId) {
+        RFuture<Long> ttlRemainingFuture;
+        // 尝试异步加锁
+        if (leaseTime > 0) {
+            ttlRemainingFuture = tryLockInnerAsync(waitTime, leaseTime, unit, threadId, RedisCommands.EVAL_LONG);
+        } else {
+            ttlRemainingFuture = tryLockInnerAsync(waitTime, internalLockLeaseTime,
+                    TimeUnit.MILLISECONDS, threadId, RedisCommands.EVAL_LONG);
+        }
+        CompletionStage<Long> s = handleNoSync(threadId, ttlRemainingFuture);
+        ttlRemainingFuture = new CompletableFutureWrapper<>(s);
+
+        CompletionStage<Long> f = ttlRemainingFuture.thenApply(ttlRemaining -> {
+            // lock acquired
+            if (ttlRemaining == null) {
+                if (leaseTime > 0) {
+                    internalLockLeaseTime = unit.toMillis(leaseTime);
+                } else {
+                    scheduleExpirationRenewal(threadId);
+                }
+            }
+            return ttlRemaining;
+        });
+        return new CompletableFutureWrapper<>(f);
+    }
+    
+    // 刷新到期时间
+    private void renewExpiration() {
+        ExpirationEntry ee = EXPIRATION_RENEWAL_MAP.get(getEntryName());
+        if (ee == null) {
+            return;
+        }
+        // 创建定时任务, 超时时间是锁的租约时间/3
+        Timeout task = getServiceManager().newTimeout(new TimerTask() {
+            @Override
+            public void run(Timeout timeout) throws Exception {
+                ExpirationEntry ent = EXPIRATION_RENEWAL_MAP.get(getEntryName());
+                if (ent == null) {
+                    return;
+                }
+                Long threadId = ent.getFirstThreadId();
+                if (threadId == null) {
+                    return;
+                }
+                // 执行Lua脚本
+                CompletionStage<Boolean> future = renewExpirationAsync(threadId);
+                future.whenComplete((res, e) -> {
+                    if (e != null) {
+                        if (getServiceManager().isShuttingDown(e)) {
+                            return;
+                        }
+
+                        log.error("Can't update lock {} expiration", getRawName(), e);
+                        EXPIRATION_RENEWAL_MAP.remove(getEntryName());
+                        return;
+                    }
+                    // 如果当前线程还持有锁则继续订阅
+                    // 如果当前线程未持有锁则取消订阅
+                    if (res) {
+                        // reschedule itself
+                        renewExpiration();
+                    } else {
+                        cancelExpirationRenewal(null, null);
+                    }
+                });
+            }
+        }, internalLockLeaseTime / 3, TimeUnit.MILLISECONDS);
+        
+        ee.setTimeout(task);
+    }
+    
+    // 异步执行刷新到期时间
+    // 如果在Redis Map中还存在指定的锁, 则刷新到期时间
+    protected CompletionStage<Boolean> renewExpirationAsync(long threadId) {
+        return evalWriteSyncedAsync(getRawName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,
+                "if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then " +
+                        "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+                        "return 1; " +
+                        "end; " +
+                        "return 0;",
+                Collections.singletonList(getRawName()),
+                internalLockLeaseTime, getLockName(threadId));
+    }
+```
+
+##### 3.5 Redisson实现可重入锁
+
+可重入锁: 也叫递归锁, 是指一个线程可以多次获取同一把锁
+
+Redisson实现可重入锁的原理: 
+
+使用Redis的hash数据结构实现, 其中key是锁的名称, value是hash类型数据结构
+
+Hash的key是线程Id, Hash的value是加锁次数
 
 
 
