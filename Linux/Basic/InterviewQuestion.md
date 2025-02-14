@@ -16,13 +16,15 @@
 ##### 服务器CPU使用率飙升异常, 黄金4步排查法
 
 1. 找到占用CPU最高的Java进程PID: top
-2. 根据PID找到占用CPU最高的线程: ps -mp pid -o THREAD,tid | sort -r
+2. 根据PID找到占用CPU最高的线程: ps -mp <PID> -o THREAD,tid | sort -r
 3. 将指定的线程ID输出为16进制格式: printf "%x\n" tid
 4. 使用16进程格式的线程ID查找线程堆栈信息: jstack pid|grep tid -A 50
 
 #### 什么场景会造成CPU低而负载很高?
 
 ---
+
+
 
 #### 机器内存占有率居高不下, 如何进行优化？
 
