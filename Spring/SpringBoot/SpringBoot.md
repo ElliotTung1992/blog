@@ -21,21 +21,21 @@ convention-over-configuration: 约定大于配置
 
 
 
-@SpringBootApplication注解包含下面三个注解
+@SpringBootApplication注解包含下面三个注解:
 
-@SpringBootConfiguration注解 - 其实就是@Configuration, 标注当前类为配置类
+1. @SpringBootConfiguration注解 - 其实就是@Configuration, 标注当前类为配置类
 
-@EnableAutoConfiguration注解 - 开启自动配置
+2. @EnableAutoConfiguration注解 - 开启自动配置
 
-@ComponentScan注解 - 扫描包
+3. @ComponentScan注解 - 扫描包
 
 
 
-@EnableAutoConfiguration注解包含下面两个注解
+@EnableAutoConfiguration注解包含下面两个注解:
 
-@AutoConfigurationPackage注解 - 就是将主配置类所在的包下面所有的组件都扫描注册到Spring容器中
+1. @AutoConfigurationPackage注解 - 就是将主配置类所在的包下面所有的组件都扫描注册到Spring容器中
 
-@AutoConfigurationImportSelector注解
+2. @Import注解 - AutoConfigurationImportSelector类
 
 
 
