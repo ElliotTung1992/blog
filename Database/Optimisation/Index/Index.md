@@ -210,6 +210,8 @@ explain select * from <table> where <field = value>;
 
 ##### range: 范围扫描
 
+​	like
+
 ​	between
 
 ​	in
@@ -232,17 +234,41 @@ explain select * from <table> where <field = value>;
 
 ---
 
-1. 在where子句中使用以'%'开头的like语句进行模糊查询
-2. xx is null, 对字段进行null值判断
-3. 使用!=或者<>操作符
-4. 使用not in
-5. 使用in但是in的取值范围较大时会导致索引失效
-6. 在where子句中使用or作为连接条件时, or前面的列和后面的列有一个没有索引, 那么设计的索引也会失效
-7. 数据类型不匹配
-8. 对小表查询
-9. 对索引列参与函数、算数运算或者表达式运算都会导致索引失效
-10. 违背最左匹配原则
-11. 当索引列有大量重复数据时, 索引也会失效
+```
+1. 不在索引列做任何的操作 - 计算
+select * from student a where a.age + 1 = 234;
+2. 不在索引列做函数操作
+explain select * from student a where LENGTH(a.age) = 3;
+3. 类型转换
+student_id字段的类型是字符串以下sql不走索引
+select * from student a where a.student_id = 952714;
+底层逻辑, 使用CAST函数进行转换:
+select * from student a where CAST(a.student_id AS signed int) = 952714;
+4. 存储引擎不能使用索引中范围条件右边的列
+select * from user where username='123' and age>20 and phone='1390012345',其中username, age, phone都有索引，只有username和age会生效，phone的索引没有用到.
+5. 尽量使用覆盖索引
+table表添加field1为索引
+-- 走覆盖索引
+select a.field1 from table where a.field1;
+-- 不走覆盖索引
+select * from table where a.field1;
+6. mysql在使用负向查询条件的时候无法使用索引会导致全表扫描(!=, <>, not in, not exists, not like)
+explain select * from student a where a.age <> 14;
+explain select * from student a where a.name not like 'Bruce14';
+7. is null也无法使用索引, 在实际中尽量不要使用null, 在高版本的mysql中已经做了优化, 允许使用索引
+explain select * from student a where a.age is null;
+8. like以通配符(%)开头时, mysql索引会失效变成全表扫描操作
+explain select * from student where name like '%xxx';
+9. 在使用or条件匹配时, 如果or前面的条件列是索引列, or后面的条件列不是索引列, 那么索引就会失效
+explain select * from student a where a.age = 14 or a.class_id = 1;
+10. 在组合/联合索引中, 将区分度高的字段放在前面
+如果没有区分度，例如用性别，相当于把整个大表分成两部分，查找数据还是需要遍历半个表才能找到，使得索引失去了意义.
+11. 使用前缀索引
+短索引不仅可以提高查询性能还可以节约磁盘空间和I/O操作, 减少索引文件的维护开销.
+但缺点是不能用于ORDER BY和GROUP BY操作, 也不能用于覆盖索引.
+```
+
+
 
 
 
