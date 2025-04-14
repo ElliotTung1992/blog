@@ -7,6 +7,8 @@
 1. Runnable接口run方法无返回值; Callable接口call方法有返回值, 是个范性, 和Future和FutureTask配合可以用来获取异步执行的结果
 2. Runnable接口的run方法只能抛出运行时异常且无法捕获异常. Callable接口call方法允许抛出异常, 可以获取异常信息.
 
+
+
 #### ThreadPoolExecutor
 
 ---
@@ -78,7 +80,25 @@
 
 @param handler: 处理器; 当处理被阻塞时使用的处理器, 因为达到了线程的边界和队列的容量
 
+
+
+#### RejectedExecutionHandler
+
+---
+
+##### CallerRunsPolicy
+
+直接让提交任务的调用者线程(如主线程)执行该任务, 而非丢弃或抛出异常.
+
+1. 调用者线程会阻塞并亲自运行被拒绝的任务
+2. 通过让调用者参与执行, 间接降低了新任务的提交速度, 给线程池喘息的时间
+3. 适用不允许任务丢失但能容忍任务短暂阻塞的场景
+
+
+
 #### Executors
+
+---
 
 ##### FixedThreadPool 
 
@@ -130,6 +150,8 @@ maximumPoolsize = Integer的最大值
 
 创建时不需要设备任何参数, 则以当前机器的处理器个数作为线程个数, 此线程池会并行处理任务, 不能保证执行顺序.
 
+
+
 #### 使用线程池的规范
 
 ---
@@ -166,6 +188,28 @@ public class UserThreadFactory implements ThreadFactory {
 
 1. FixedThreadPool和SingleThreadPool - 允许的工作队列长度为Integer的最大值, 很可能堆积大量的请求, 从而导致OOM.
 2. CachedThreadPool和ScheduledThreadPool - 允许创建的线程数是Integer的最大值, 从而造成OOM.
+
+##### 资源监控:
+
+```
+// 查看队列长度
+threadPoolExecutor.getQueue().size();
+// 查看线程活跃数
+threadPoolExecutor.getActiveCount();
+```
+
+
+
+#### 思考: 如何设置任务不丢失
+
+---
+
+1. 普通业务系统: CallerRunsPolicy或者无界队列
+2. 金融交易系统: 持久化到DB + 定时任务
+3. 高吞吐异步处理: 消息队列中间件
+4. 大数据处理: 本地磁盘暂存 + 批量恢复
+
+
 
 #### 使用场景
 
