@@ -73,7 +73,7 @@ Git是目前世界上最好的分布式版本控制系统.
 
 查看隐藏内容: git stash list.
 
-清空隐藏内容: git stash clean.
+清空隐藏内容: git stash clear.
 
 恢复指定版本的隐藏内容, 并手动删除: git stash apply stash@{$num}, git stash drop stash@{$num}.
 
