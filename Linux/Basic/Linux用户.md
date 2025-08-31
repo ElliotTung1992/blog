@@ -19,3 +19,49 @@
 普通用户的登录终端是/bin/bash, 能够正常使用这个账号登录服务器
 
 系统用户的登录终端是/sbin/nologin, 不能够正常登录到服务器
+
+
+
+#### Linux创建用户组并添加用户
+
+##### 1. 创建用户组
+
+```
+sudo groupadd [groupname]
+```
+
+##### 2. 添加用户并添加到用户组
+
+```
+sudo useradd -g [groupname] [username]
+```
+
+##### 3. 设置用户密码
+
+```
+sudo passwd [username]
+```
+
+##### 4. 验证用户组和用户
+
+```
+cat /etc/group
+cat /etc/passwd
+
+su [username]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
